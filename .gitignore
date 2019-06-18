@@ -1,11 +1,15 @@
 venv/
 
+settings.json
+
 *.pyc
 *.idea
 __pycache__/
 
 instance/
 
+.vscode/
+.benchmarks/
 .pytest_cache/
 .coverage
 *.un

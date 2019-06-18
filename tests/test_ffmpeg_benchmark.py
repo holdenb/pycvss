@@ -10,5 +10,6 @@ from benchmarking import ffmpeg_benchmark
 
 
 def test_example_benchmark (benchmark):
-    benchmark (ffmpeg_benchmark.example_benchmark)
-    assert (True)
+    benchmark (ffmpeg_benchmark.resolution_conversion,
+               input_=ffmpeg_benchmark.SAMPLE_VIDEO_1,
+               scale_='1280:720', output_name_='benchmark-output.mp4')
