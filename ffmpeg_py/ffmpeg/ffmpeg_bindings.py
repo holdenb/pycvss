@@ -8,7 +8,8 @@ import ffmpeg_py.utils as utils
 FFMPEG_PROCESS_BASE = ['ffmpeg']
 
 
-def scale_video(input_: str, scale_: str, output_name_: str):
+@utils.dec_exec_output_stream
+def scale_video_args(input_: str, scale_: str, output_name_: str):
         """Scale a video to a different resolution
 
         Example ffmpeg command:
@@ -27,5 +28,4 @@ def scale_video(input_: str, scale_: str, output_name_: str):
         args = ['-y', '-i', input_, '-filter:v', f'scale={scale_}', '-c:a', 'copy', output_name_]
         args_base.extend(args)
 
-        for path in utils.execute(args_base):
-                print(path, end="")
+        return args_base

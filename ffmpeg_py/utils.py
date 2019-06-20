@@ -18,11 +18,22 @@ def dec_calculate_time(func_):
         Function -- The decorated function
         """
         def decorated(*args, **kwargs):
-                """ Inner function to be decorated """
+                """Inner function to be decorated"""
                 begin = time.time()
                 func_(*args, **kwargs)
                 end = time.time()
                 print("Total time taken in : ", func_.__name__, end - begin)
+
+        return decorated
+
+
+def dec_exec_output_stream(func_):
+
+        def decorated(*args, **kwargs):
+                """Inner function to be decorated"""
+                args_base = func_(*args, **kwargs)
+                for path in execute(args_base):
+                        print(path, end="")
 
         return decorated
 
