@@ -1,3 +1,4 @@
+import os
 import subprocess
 import time 
 import math 
@@ -15,7 +16,7 @@ def dec_calculate_time(func_):
         func {function} -- Function to benchmark
 
         Returns:
-        Function -- The decorated function
+        function -- The decorated function
         """
         def decorated(*args, **kwargs):
                 """Inner function to be decorated"""
@@ -28,7 +29,23 @@ def dec_calculate_time(func_):
 
 
 def dec_exec_output_stream(func_):
+        """Decorator for executing a subprocess argument list
+        returned from a given decorated function. This decorator
+        will also print stdout to the console.
 
+        example call:
+        @dec_exec_output_stream
+        def my_funct():
+                return args
+
+        Arguments:
+        func {function} -- Function that returns arguments
+                that we should execute and then print process
+                stdout
+
+        Returns:
+        function -- The decorated function
+        """
         def decorated(*args, **kwargs):
                 """Inner function to be decorated"""
                 args_base = func_(*args, **kwargs)
