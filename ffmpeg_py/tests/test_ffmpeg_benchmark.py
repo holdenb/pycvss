@@ -15,8 +15,12 @@ import ffmpeg_py.ffmpeg.ffmpeg_bindings as bindings
 
 # Sample video directory full path
 SAMPLE_VIDEO_DIR = os.path.join(os.path.dirname(os.path.realpath(os.path.dirname(__file__))), 'sample-video')
-# Sample video 1 full path
-SAMPLE_VIDEO_1 = os.path.join(SAMPLE_VIDEO_DIR, 'ppress_1080p_16-9_23-79fps.mp4')
+
+# Sample video full path
+# NOTE We need to have multiple copies for each benchmark because FFMPEG cannot edit existing files in-place.
+SAMPLE_VIDEO_1 = os.path.join(SAMPLE_VIDEO_DIR, 'ppress_1080p_16-9_23-79fps_1.mp4')
+SAMPLE_VIDEO_2 = os.path.join(SAMPLE_VIDEO_DIR, 'ppress_1080p_16-9_23-79fps_2.mp4')
+SAMPLE_VIDEO_3 = os.path.join(SAMPLE_VIDEO_DIR, 'ppress_1080p_16-9_23-79fps_3.mp4')
 
 
 #TODO Benchmark in-place conversion vs normal conversion
@@ -36,10 +40,10 @@ def test_benchmark_scale_video(benchmark):
     Arguments:
         benchmark {benchmark} -- pytest-benchmark object
     """
-    output_name = 'benchmark-scale-output.mp4'
+    output_name = 'benchmark-scale-video-output.mp4'
     benchmark.pedantic(
         bindings.scale_video_args,
-        args=(SAMPLE_VIDEO_1, '1280:720', output_name),
+        args=(SAMPLE_VIDEO_1, output_name, '1280:720'),
         iterations=1, rounds=1)
 
     assert(handle_test_cleanup(output_name))
@@ -51,10 +55,25 @@ def test_benchmark_raw_encode(benchmark):
     Arguments:
         benchmark {benchmark} -- pytest-benchmark object
     """
-    output_name = 'benchmark-raw-encode-scale-output.mp4'
+    output_name = 'benchmark-raw-encode-output.mkv'
     benchmark.pedantic(
         bindings.encode_and_adjust_args,
-        args=(SAMPLE_VIDEO_1, output_name),
+        args=(SAMPLE_VIDEO_2, output_name, 1, 30, 720),
+        iterations=1, rounds=1)
+
+    assert(handle_test_cleanup(output_name))
+
+
+def test_benchmark_modify_stream(benchmark):
+    """Benchmark test for the modify stream function
+    
+    Arguments:
+        benchmark {benchmark} -- pytest-benchmark object
+    """
+    output_name = 'benchmark-modify-stream-output.mp4'
+    benchmark.pedantic(
+        bindings.encode_and_adjust_args,
+        args=(SAMPLE_VIDEO_3, output_name, '00:00:02', 5),
         iterations=1, rounds=1)
 
     assert(handle_test_cleanup(output_name))

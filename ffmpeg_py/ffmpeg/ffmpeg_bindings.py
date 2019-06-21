@@ -8,8 +8,9 @@ import ffmpeg_py.utils as utils
 FFMPEG_INPUT_PROCESS_BASE = ['ffmpeg', '-y', '-i']
 
 
+@utils.dec_calculate_time
 @utils.dec_exec_output_stream
-def scale_video_args(input_: str, scale_: str, output_name_: str) -> list:
+def scale_video_args(input_: str, output_name_: str, scale_: str) -> list:
         """Scale a video to a different resolution
 
         Example ffmpeg command:
@@ -17,11 +18,12 @@ def scale_video_args(input_: str, scale_: str, output_name_: str) -> list:
         
         Arguments:
             input_ {str} -- path/to/and/including/input/videoName
-            scale_ {str} -- Scale string ex: '1280:70'
             output_name_ {str} -- path/to/and/including/output/videoName
+            scale_ {str} -- Scale string ex: '1280:70'
 
         Returns:
-        list -- A list of arguments required to make a subprocess call
+            list -- A List of the arguments needed to make a ffmpeg subprocess call
+            Note: Decorators can handle the call
         """
         input_file = Path(input_)
         if not input_file.is_file():
@@ -33,10 +35,12 @@ def scale_video_args(input_: str, scale_: str, output_name_: str) -> list:
 
         return args_base
 
+
+@utils.dec_calculate_time
 @utils.dec_exec_output_stream
 def encode_and_adjust_args(input_: str, output_name_: str, bitrate_=None, fps_=None, scale_=None) -> list:
         """Encodes a video into a Matroska container, and adjusts various fields based
-           on specific settings.
+        on specific settings.
         
         Example ffmpeg commands:
         ffmpeg -i input.webm -c:a copy -c:v vp9 -b:v 1M output.mkv
@@ -55,8 +59,8 @@ def encode_and_adjust_args(input_: str, output_name_: str, bitrate_=None, fps_=N
         to 1280x720 in the output.
 
         Arguments:
-                input_ {str} -- [description]
-                output_ {str} -- [description]
+                input_ {str} -- Input video
+                output_name_ {str} -- Output path including output name
 
         Keyword Arguments:
                 bitrate_ {int} -- Bitrate of the encoded video (default: {None})
@@ -64,11 +68,12 @@ def encode_and_adjust_args(input_: str, output_name_: str, bitrate_=None, fps_=N
                 scale_ {int} -- Desired scale conversion (default: {None})
 
         Returns:
-            list -- [description]
+            list -- A List of the arguments needed to make a ffmpeg subprocess call
+            Note: Decorators can handle the call
         """
         input_file = Path(input_)
         if not input_file.is_file():
-                raise Exception (f'Input: {input_}: is not a valid file.')
+                raise FileNotFoundError(f'Input: {input_}: is not a valid file.')
 
         args_base = FFMPEG_INPUT_PROCESS_BASE
         args = [input_, '-c:a', 'copy', '-c:v', 'vp9']
@@ -81,6 +86,47 @@ def encode_and_adjust_args(input_: str, output_name_: str, bitrate_=None, fps_=N
         if scale_ and type(scale_) is int:
                 args_base.extend(['-s', f'hd{scale_}'])
 
+        output = os.path.abspath(output_name_)
+        args_base.extend([output])
+
+        return args_base
+
+
+@utils.dec_calculate_time
+@utils.dec_exec_output_stream
+def modify_stream_args(input_: str, output_name_: str, cut_point_: str, duration_: int, audio_=False) -> list:
+        """Copy video and audio streams and will also trim the video. -t sets the cut duration
+        to be N seconds and -ss option set the start point of the video eg. ('00:01:00').
+
+        Example ffmpeg commands:
+        ffmpeg -i input.mkv -c:av copy -ss 00:01:00 -t 10 output.mkv
+
+        This command will copy audio/video streams, set the cut duration to 10 seconds, and set
+        the start point to trim at 1 minute.
+        
+        Arguments:
+            input_ {str} -- Input video / Matroska container
+            output_name_ {str} -- Output path including output name
+            cut_point_ {str} -- Cut point eg. str('00:01:00')
+            duration_ {int} -- Duration of the cut eg. int(10)
+
+        Keyword Arguments:
+                audio_ {bool} -- Should we also modify/cut the audio
+
+        Returns:
+            list -- A List of the arguments needed to make a ffmpeg subprocess call
+            Note: Decorators can handle the call
+        """
+        input_file = Path(input_)
+        if not input_file.is_file():
+                raise Exception (f'Input: {input_}: is not a valid file.')
+
+        av_input = '-c:av' if audio_ else '-c:v'
+        
+        args_base = FFMPEG_INPUT_PROCESS_BASE
+        args = [input_, av_input, 'copy', '-ss', f'{cut_point_}', '-t', f'{str(duration_)}']
+        args_base.extend(args)
+        
         output = os.path.abspath(output_name_)
         args_base.extend([output])
 
