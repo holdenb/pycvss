@@ -11,7 +11,8 @@ from pathlib import Path
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../..'))
 
 # Local imports
-import ffmpeg_py.ffmpeg.ffmpeg_bindings as bindings
+import ffmpeg_py.ffmpeg.process_args as fp_args
+import ffmpeg_py.ffmpeg.calls as calls
 
 # Sample video directory full path
 SAMPLE_VIDEO_DIR = os.path.join(os.path.dirname(os.path.realpath(os.path.dirname(__file__))), 'sample-video')
@@ -42,8 +43,8 @@ def test_benchmark_scale_video(benchmark):
     """
     output_name = 'benchmark-scale-video-output.mp4'
     benchmark.pedantic(
-        bindings.scale_video_args,
-        args=(SAMPLE_VIDEO_1, output_name, '1280:720'),
+        calls.call_args_list,
+        args=(fp_args.scale_video_args, SAMPLE_VIDEO_1, output_name, '1280:720'),
         iterations=1, rounds=1)
 
     assert(handle_test_cleanup(output_name))
@@ -57,8 +58,8 @@ def test_benchmark_raw_encode(benchmark):
     """
     output_name = 'benchmark-raw-encode-output.mkv'
     benchmark.pedantic(
-        bindings.encode_and_adjust_args,
-        args=(SAMPLE_VIDEO_2, output_name, 1, 30, 720),
+        calls.call_args,
+        args=(lambda: fp_args.encode_and_adjust_args(SAMPLE_VIDEO_2, output_name, 1, 30, 720)),
         iterations=1, rounds=1)
 
     assert(handle_test_cleanup(output_name))
@@ -72,8 +73,8 @@ def test_benchmark_modify_stream(benchmark):
     """
     output_name = 'benchmark-modify-stream-output.mp4'
     benchmark.pedantic(
-        bindings.encode_and_adjust_args,
-        args=(SAMPLE_VIDEO_3, output_name, '00:00:02', 5),
+        calls.call_args,
+        args=(lambda: fp_args.modify_stream_args (SAMPLE_VIDEO_3, output_name, '00:00:02', 5)),
         iterations=1, rounds=1)
 
     assert(handle_test_cleanup(output_name))

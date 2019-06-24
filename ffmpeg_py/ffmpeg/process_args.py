@@ -2,14 +2,11 @@ import os
 import sys
 from pathlib import Path
 
-import ffmpeg_py.utils as utils
 
 # FFMPEG input process base arguments
 FFMPEG_INPUT_PROCESS_BASE = ['ffmpeg', '-y', '-i']
 
 
-@utils.dec_calculate_time
-@utils.dec_exec_output_stream
 def scale_video_args(input_: str, output_name_: str, scale_: str) -> list:
         """Scale a video to a different resolution
 
@@ -36,8 +33,6 @@ def scale_video_args(input_: str, output_name_: str, scale_: str) -> list:
         return args_base
 
 
-@utils.dec_calculate_time
-@utils.dec_exec_output_stream
 def encode_and_adjust_args(input_: str, output_name_: str, bitrate_=None, fps_=None, scale_=None) -> list:
         """Encodes a video into a Matroska container, and adjusts various fields based
         on specific settings.
@@ -92,8 +87,6 @@ def encode_and_adjust_args(input_: str, output_name_: str, bitrate_=None, fps_=N
         return args_base
 
 
-@utils.dec_calculate_time
-@utils.dec_exec_output_stream
 def modify_stream_args(input_: str, output_name_: str, cut_point_: str, duration_: int, audio_=False) -> list:
         """Copy video and audio streams and will also trim the video. -t sets the cut duration
         to be N seconds and -ss option set the start point of the video eg. ('00:01:00').

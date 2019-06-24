@@ -23,7 +23,8 @@ def dec_calculate_time(func_):
                 begin = time.time()
                 func_(*args, **kwargs)
                 end = time.time()
-                print("Total time taken in : ", func_.__name__, end - begin)
+                
+                return (end - begin)
 
         return decorated
 
