@@ -5,6 +5,8 @@ import math
 
 
 ######################################################################################
+# Utility functions
+
 def dec_calculate_time(func_):
         """Decorator for benchmarking a single function call
 

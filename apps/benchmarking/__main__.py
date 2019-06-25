@@ -18,14 +18,7 @@ CURRENT_DIR = os.getcwd()
 
 # TODO doc
 def _file(output_file_: str) -> str:
-    """[summary]
-    
-    Arguments:
-        output_file_ {str} -- [description]
-    
-    Returns:
-        str -- [description]
-    """
+    """Prepends the current path where this script is run, to an output file"""
     return os.path.join (CURRENT_DIR, output_file_)
 
 
@@ -49,14 +42,7 @@ BENCHMARK_FUNCTIONS = {
 
 # TODO doc
 def _handle_test_cleanup(output_file_: str) -> bool:
-    """[summary]
-    
-    Arguments:
-        output_file_ {str} -- [description]
-    
-    Returns:
-        bool -- [description]
-    """
+    """ Handles the cleanup of output files"""
     try:
         output = Path(output_file_)
         os.remove(output)

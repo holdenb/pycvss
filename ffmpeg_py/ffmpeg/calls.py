@@ -2,6 +2,8 @@ import ffmpeg_py.utils as utils
 
 
 ######################################################################################
+# Decorator call functions
+
 @utils.dec_exec_output_stream
 def call_args(funct):
     """Call arguments from a given function

@@ -4,6 +4,9 @@ from pathlib import Path
 
 
 ######################################################################################
+# Defines a group of functions used to provide optimal, ease of use input parameters
+# for ffmpeg processess
+
 # FFMPEG input process base arguments
 FFMPEG_INPUT_PROCESS_BASE = ['ffmpeg', '-y', '-i']
 
@@ -125,3 +128,27 @@ def modify_stream_args(input_: str, output_name_: str, cut_point_: str, duration
         args_base.extend([output])
 
         return args_base
+
+
+def hw_accel_encode() -> list:
+        """Uses CUDA GPU hardware acceleration to encode input video streams
+        
+        Parameter notes:
+                [-hwaccel cuvid] uses NVidia CUDA GPU acceleration for decoding (also working: dxva2)
+                [-c:v h264_nvenc] uses NVidia h264 GPU Encoder
+                [-pix_fmt yuv420p] 4:2:0 color subsampling
+                [-preset slow] HQ gpu encoding
+                [-rc vbr_hq] uses RC option to enable variable bitrate encoding with GPU encoding
+                [-qmin:v 19 -qmax:v 14] sets minimum and maximum quantization values (optional)
+                [-b:v 6M -maxrate:v 10M] sets average (target) and maximum bitrate allowed for the encoder
+
+                NOTE: There are a lot more options for GPU hardware encoding/decoding.
+                With the options above the GPU is used for DECODING and ENCODING
+                – these are the most reliable GPU encoding options. This way it is possible to process the frames,
+                for example with the -vf option.
+
+        Returns:
+            list -- A List of the arguments needed to make a ffmpeg subprocess call
+            Note: Decorators can handle the call
+        """
+        return []
