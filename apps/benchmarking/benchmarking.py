@@ -51,12 +51,26 @@ def _handle_test_cleanup(output_file_: str) -> bool:
         print(f"Skipping file: '{output_file_}': File not found.")
 
 
-# TODO command line args to optionally cleanup output files
+def print_sep ():
+    print('-' * 100)
+
+
+def _format_output (str_: str):
+    print(str_)
+    print_sep()
+
+
 if __name__ == "__main__":
     # Benchmarking outside of pytest-benchmark
 
-    # TODO inject a formatting function into the list comprehension when extracting calls from the benchmarking map
-    list(map(lambda x: print(x + '\n'), [str(name + ': ' + str(call())) for (name, call) in BENCHMARK_FUNCTIONS.items()]))
+    results = list()
+    list(map(lambda x: results.append (x), [str('['+ name + ': ' + str(call()) + 's]') for (name, call) in BENCHMARK_FUNCTIONS.items()]))
+
+    # Print results
+    print('\n[----Benchmark results----]')
+    print_sep()
+    list(map(_format_output, results))
+    print()
 
     # Clean up output files
     list(map(lambda x: _handle_test_cleanup(x), OUTPUT_FILES))
