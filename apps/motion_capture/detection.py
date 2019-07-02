@@ -42,7 +42,7 @@ CURRENT_DIR = os.getcwd()
 FILE_FORMATS = [
     'MP4', 'mp4', 'M4P', 'M4B', 'M4R', 'M4V',
     'M4A', 'DIVX','EVO', 'F4V', 'FLV',
-    'AVI', 'QT', 'MXF', 'MOV', 'MTS',
+    'AVI', 'QT', 'MXF', 'MOV', 'mov', 'MTS',
     'M2TS','MPEG', 'VOB', 'IFO']
 
 
@@ -84,7 +84,7 @@ class Detector:
 
     #advanced filter parameters
     step_len_f = 10 #20             #compare every n frame
-    min_threshold_score = 0.0095#default threshold. a score above indicates motion
+    min_threshold_score = 0.0180 #0.0095 #default threshold. a score above indicates motion
     test_duration_s = 3 #7         #seek for a ('motionless'ish') segment this long. threshold automatically adjusts up if necessary (and possible)
     max_threshold_score = 0.04
     segments_smooth = 0         #assign median score from n segments before and after to smooth out scores
