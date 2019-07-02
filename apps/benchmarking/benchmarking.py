@@ -16,7 +16,6 @@ import ffmpeg_py.tests.test_ffmpeg_benchmark as tests
 CURRENT_DIR = os.getcwd()
 
 
-# TODO doc
 def _file(output_file_: str) -> str:
     """Prepends the current path where this script is run, to an output file"""
     return os.path.join (CURRENT_DIR, output_file_)
@@ -26,7 +25,8 @@ def _file(output_file_: str) -> str:
 OUTPUT_FILES = [
     _file('output_1.mp4'),
     _file('output_2.mp4'),
-    _file('output_1.mkv')
+    _file('output_1.mkv'),
+    _file('output_3.mp4')
 ]
 
 # Benchmarking function calls
@@ -36,11 +36,12 @@ BENCHMARK_FUNCTIONS = {
     'encode_and_adjust': lambda: calls.call_log_args(lambda: fp_args.encode_and_adjust_args(
         tests.SAMPLE_VIDEO_2, OUTPUT_FILES[1], bitrate_=1, fps_=30, scale_=720)),
     'modify_stream': lambda: calls.call_log_args(lambda: fp_args.modify_stream_args(
-        tests.SAMPLE_VIDEO_3, OUTPUT_FILES[2], '00:00:02', 5))
+        tests.SAMPLE_VIDEO_3, OUTPUT_FILES[2], '00:00:02', 5)),
+    'encode_with_gpu_cuda_accel': lambda: calls.call_log_args(lambda: fp_args.hw_accel_encode(
+        tests.SAMPLE_VIDEO_5, OUTPUT_FILES[3], 6, 10))
 }
 
 
-# TODO doc
 def _handle_test_cleanup(output_file_: str) -> bool:
     """ Handles the cleanup of output files"""
     try:

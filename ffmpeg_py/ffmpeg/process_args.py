@@ -11,6 +11,12 @@ from pathlib import Path
 FFMPEG_INPUT_PROCESS_BASE = ['ffmpeg', '-y', '-i']
 
 
+def _validate_input (input_: str):
+        input_file = Path(input_)
+        if not input_file.is_file():
+                raise Exception (f'Input: {input_}: is not a valid file.')
+
+
 def scale_video_args(input_: str, output_name_: str, scale_: str) -> list:
         """Scale a video to a different resolution
 
@@ -26,9 +32,7 @@ def scale_video_args(input_: str, output_name_: str, scale_: str) -> list:
             list -- A List of the arguments needed to make a ffmpeg subprocess call
             Note: Decorators can handle the call
         """
-        input_file = Path(input_)
-        if not input_file.is_file():
-                raise Exception (f'Input: {input_}: is not a valid file.')
+        _validate_input(input_)
 
         args_base = FFMPEG_INPUT_PROCESS_BASE
         args = [input_, '-filter:v', f'scale={scale_}', '-c:a', 'copy', os.path.abspath(output_name_)]
@@ -70,9 +74,7 @@ def encode_and_adjust_args(input_: str, output_name_: str, bitrate_=None, fps_=N
             list -- A List of the arguments needed to make a ffmpeg subprocess call
             Note: Decorators can handle the call
         """
-        input_file = Path(input_)
-        if not input_file.is_file():
-                raise FileNotFoundError(f'Input: {input_}: is not a valid file.')
+        _validate_input(input_)
 
         args_base = FFMPEG_INPUT_PROCESS_BASE
         args = [input_, '-c:a', 'copy', '-c:v', 'vp9']
@@ -114,10 +116,7 @@ def modify_stream_args(input_: str, output_name_: str, cut_point_: str, duration
             list -- A List of the arguments needed to make a ffmpeg subprocess call
             Note: Decorators can handle the call
         """
-        input_file = Path(input_)
-        if not input_file.is_file():
-                raise Exception (f'Input: {input_}: is not a valid file.')
-
+        _validate_input(input_)
         av_input = '-c:av' if audio_ else '-c:v'
         
         args_base = FFMPEG_INPUT_PROCESS_BASE
@@ -130,17 +129,23 @@ def modify_stream_args(input_: str, output_name_: str, cut_point_: str, duration
         return args_base
 
 
-def hw_accel_encode() -> list:
+def hw_accel_encode(input_: str, output_name_: str, avg_bitrate_: int, max_bitrate_: int) -> list:
         """Uses CUDA GPU hardware acceleration to encode input video streams
         
         Parameter notes:
                 [-hwaccel cuvid] uses NVidia CUDA GPU acceleration for decoding (also working: dxva2)
                 [-c:v h264_nvenc] uses NVidia h264 GPU Encoder
-                [-pix_fmt yuv420p] 4:2:0 color subsampling
+                [-pix_fmt p010le] YUV 4:2:0 10-bit
+                [-c:v hevc_nvenc] uses HEVC/h265 GPU hardware encoder
                 [-preset slow] HQ gpu encoding
                 [-rc vbr_hq] uses RC option to enable variable bitrate encoding with GPU encoding
                 [-qmin:v 19 -qmax:v 14] sets minimum and maximum quantization values (optional)
                 [-b:v 6M -maxrate:v 10M] sets average (target) and maximum bitrate allowed for the encoder
+
+                Example call: Encoding high quality h265/HEVC 10-bit video via GPU:
+
+                ffmpeg.exe -hwaccel cuvid -i inmovie.mov -pix_fmt p010le -c:v hevc_nvenc -preset slow
+                -rc vbr_hq -b:v 6M -maxrate:v 10M -c:a aac -b:a 240k outmovie.mp4
 
                 NOTE: There are a lot more options for GPU hardware encoding/decoding.
                 With the options above the GPU is used for DECODING and ENCODING
@@ -149,6 +154,21 @@ def hw_accel_encode() -> list:
 
         Returns:
             list -- A List of the arguments needed to make a ffmpeg subprocess call
-            Note: Decorators can handle the call
+        Note: Decorators can handle the call
         """
-        return []
+        _validate_input(input_)
+
+        if type(avg_bitrate_) is not int:
+                raise TypeError ("Average bitrate input is not an Integer.")
+        if type(max_bitrate_) is not int:
+                raise TypeError ("Max bitrate input is not an Integer.")
+        
+        args = ['ffmpeg', '-hwaccel', 'cuvid', '-i', input_, '-pix_fmt', 'p010le', '-c:v',
+                'hevc_nvenc', '-preset', 'slow', '-rc', 'vbr_hq', '-b:v',
+                f'{avg_bitrate_}M', '-maxrate:v', f'{max_bitrate_}M', '-c:a', 'aac',
+                '-b:a', '240k']
+        
+        output = os.path.abspath(output_name_)
+        args.extend([output])
+
+        return args

@@ -17,5 +17,7 @@ SAMPLE_VIDEO_1 = os.path.join(SAMPLE_VIDEO_DIR, 'ppress_1080p_16-9_23-79fps_1.mp
 SAMPLE_VIDEO_2 = os.path.join(SAMPLE_VIDEO_DIR, 'ppress_1080p_16-9_23-79fps_2.mp4')
 SAMPLE_VIDEO_3 = os.path.join(SAMPLE_VIDEO_DIR, 'ppress_1080p_16-9_23-79fps_3.mp4')
 SAMPLE_VIDEO_4 = os.path.join(SAMPLE_VIDEO_DIR, 'dogs_1080p_16-9_25-fps_1.mp4')
+SAMPLE_VIDEO_5 = os.path.join(SAMPLE_VIDEO_DIR, 'Panasonic_HDC_TM_700_P_50i.mov')
+
 
 #TODO Add unit tests for process_args functs

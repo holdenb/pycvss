@@ -38,11 +38,13 @@ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 CURRENT_DIR = os.getcwd()
 
 # File formats
+# TODO Use a better way to validate this
 FILE_FORMATS = [
     'MP4', 'mp4', 'M4P', 'M4B', 'M4R', 'M4V',
     'M4A', 'DIVX','EVO', 'F4V', 'FLV',
     'AVI', 'QT', 'MXF', 'MOV', 'MTS',
     'M2TS','MPEG', 'VOB', 'IFO']
+
 
 # TODO Refactor this code so the detector is a lot simpler to understand. Also add
 # functionality to take multiple input files as per original implementation.
