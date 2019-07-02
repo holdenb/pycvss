@@ -59,11 +59,11 @@ class Detector:
     The extracted files are lossless copies from the input file bitstream.
     """
     #basic parameters
-    before_s = 2.5              #start copying video N seconds before motion is triggered  
-    after_s = 2                 #end copying video N seconds after motion has ended
-    min_copy_break_s = 5.9      #don't stop copying if next motion trigger sooner than this
-    ignore_start_s = 2          #seconds don't search for motion in beginning of input file
-    ignore_end_s = 2            #seconds don't search for motion at end of input file
+    before_s = 1.2 #2.5              #start copying video N seconds before motion is triggered  
+    after_s = 1.2 #2                 #end copying video N seconds after motion has ended
+    min_copy_break_s = 1.2 #5.9      #don't stop copying if next motion trigger sooner than this
+    ignore_start_s = 1 #2          #seconds don't search for motion in beginning of input file
+    ignore_end_s = 1 #2            #seconds don't search for motion at end of input file
     generate_output_file = True #set to False if you only want to read logs
     delete_input_file = False   #DANGEROUS, use only if you have COPIES of input files
 
@@ -81,13 +81,13 @@ class Detector:
     ffmpeg_loglevel = 31        #see https://ffmpeg.org/ffmpeg.html#Generic-options
 
     #advanced filter parameters
-    step_len_f = 20             #compare every n frame
+    step_len_f = 10 #20             #compare every n frame
     min_threshold_score = 0.0095#default threshold. a score above indicates motion
-    test_duration_s = 7         #seek for a ('motionless'ish') segment this long. threshold automatically adjusts up if necessary (and possible)
+    test_duration_s = 3 #7         #seek for a ('motionless'ish') segment this long. threshold automatically adjusts up if necessary (and possible)
     max_threshold_score = 0.04
     segments_smooth = 0         #assign median score from n segments before and after to smooth out scores
     segments_to_start = 2       #this many segments in a row above threshold triggers motion start
-    segments_to_end = 10        #this many segments in a row below threshold triggers motion end
+    segments_to_end = 6 #10        #this many segments in a row below threshold triggers motion end
 
     #file checking
     ffmpeg_check_file_args_pre = ['ffmpeg', '-v', 'debug', '-threads', '8', '-nostats', '-i']
