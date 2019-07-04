@@ -5,14 +5,9 @@ import glob
 import random
 import statistics		
 import time
+import pycvss.ffmpeg.calls as calls
+import pycvss.utils as utils
 from pathlib import Path
-
-# System path to the top level project directory
-sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../..'))
-
-# Local imports
-import ffmpeg_py.ffmpeg.calls as calls
-import ffmpeg_py.utils as utils
 
 
 '''
@@ -34,6 +29,8 @@ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # NOTE A lot of this code is refactored from:
 # https://github.com/Jpja/FFmpeg-Detect-Copy-Motion/blob/master/fdcm.py
 
+
+######################################################################################
 # Current working directory
 CURRENT_DIR = os.getcwd()
 
@@ -46,10 +43,11 @@ FILE_FORMATS = [
     'M2TS','MPEG', 'VOB', 'IFO']
 
 
-# TODO Refactor this code so the detector is a lot simpler to understand. Also add
+######################################################################################
+# TODO Refactor this code so the Fdcm is a lot simpler to understand. Also add
 # functionality to take multiple input files as per original implementation.
 # Possibly implement parallelism with multi file processing.
-class Detector:
+class Fdcm:
     """ FFmpeg Detect & Copy Motion (FDCM) dector object.
     FFmpeg Detect & Copy Motion (FDCM) automatically detects motion in video files.
     Each video motion event is saved to a new, separate video file. It works on most
@@ -133,7 +131,7 @@ class Detector:
         
         #get scenescores from ffmpeg
         # ffmpeg's scene change detection algo:
-        # https://www.luckydinosaur.com/u/ffmpeg-scene-change-detector
+        # https://www.luckydinosaur.com/u/ffmpeg-scene-change-Fdcm
 
         # writes to a txt file, parse it into lists, then delete file
         randint = random.randint(10000,99999)

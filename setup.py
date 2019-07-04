@@ -5,15 +5,17 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as readme_file:
     readme = readme_file.read()
 
+
+######################################################################################
 setup(
-    name="ffmpeg-py",
+    name="pycvss",
     version="0.0.1",
     author="Holden Babineaux",
     author_email="holden.bab@outlook.com",
-    description="A project for FFMPEG benchmarking and research.",
+    description="A python module for the CVSS architecture designed for research and to provide services.",
     long_description=readme,
     long_description_content_type="text/markdown",
-    url="https://github.com/HoldenB/ffmpeg-py",
+    url="https://github.com/HoldenB/pycvss",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3.7"

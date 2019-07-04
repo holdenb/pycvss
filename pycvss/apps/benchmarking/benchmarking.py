@@ -1,14 +1,9 @@
 import os
 import sys
+import pycvss.ffmpeg.process_args as fp_args
+import pycvss.ffmpeg.calls as calls
+import pycvss.sample_files as sample_files
 from pathlib import Path
-
-# System path to the top level project directory
-sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../..'))
-
-# Local imports
-import ffmpeg_py.ffmpeg.process_args as fp_args
-import ffmpeg_py.ffmpeg.calls as calls
-import ffmpeg_py.tests.test_ffmpeg_benchmark as tests
 
 
 ######################################################################################
@@ -32,16 +27,17 @@ OUTPUT_FILES = [
 # Benchmarking function calls
 BENCHMARK_FUNCTIONS = {
     'scale_video': lambda: calls.call_log_args(lambda: fp_args.scale_video_args(
-        tests.SAMPLE_VIDEO_1, OUTPUT_FILES[0], '1280:720')),
+        sample_files.SAMPLE_VIDEO_1, OUTPUT_FILES[0], '1280:720')),
     'encode_and_adjust': lambda: calls.call_log_args(lambda: fp_args.encode_and_adjust_args(
-        tests.SAMPLE_VIDEO_2, OUTPUT_FILES[1], bitrate_=1, fps_=30, scale_=720)),
+        sample_files.SAMPLE_VIDEO_2, OUTPUT_FILES[1], bitrate_=1, fps_=30, scale_=720)),
     'modify_stream': lambda: calls.call_log_args(lambda: fp_args.modify_stream_args(
-        tests.SAMPLE_VIDEO_3, OUTPUT_FILES[2], '00:00:02', 5)),
+        sample_files.SAMPLE_VIDEO_3, OUTPUT_FILES[2], '00:00:02', 5)),
     'encode_with_gpu_cuda_accel': lambda: calls.call_log_args(lambda: fp_args.hw_accel_encode(
-        tests.SAMPLE_VIDEO_5, OUTPUT_FILES[3], 6, 10))
+        sample_files.SAMPLE_VIDEO_5, OUTPUT_FILES[3], 6, 10))
 }
 
 
+######################################################################################
 def _handle_test_cleanup(output_file_: str) -> bool:
     """ Handles the cleanup of output files"""
     try:
@@ -60,6 +56,7 @@ def _format_output (str_: str):
     print_sep()
 
 
+######################################################################################
 if __name__ == "__main__":
     # Benchmarking outside of pytest-benchmark
 

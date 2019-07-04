@@ -1,4 +1,4 @@
-import ffmpeg_py.utils as utils
+import pycvss.utils as utils
 
 
 ######################################################################################

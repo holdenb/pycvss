@@ -1,6 +1,6 @@
-# FFMPEG-py
+# pycvss
 
-### A project for FFMPEG benchmarking and research :computer:
+### A python module for the CVSS architecture designed for research and to provide services. :computer:
 
 ## Quick installation guide :coffee: :eyeglasses:
 ```
