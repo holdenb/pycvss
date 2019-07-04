@@ -12,7 +12,7 @@ setup(
     version="0.0.1",
     author="Holden Babineaux",
     author_email="holden.bab@outlook.com",
-    description="A python module for the CVSS architecture designed for research and to provide services.",
+    description="A python module for the CVSS architecture designed for research and service provision.",
     long_description=readme,
     long_description_content_type="text/markdown",
     url="https://github.com/HoldenB/pycvss",

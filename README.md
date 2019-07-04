@@ -1,6 +1,6 @@
 # pycvss
 
-### A python module for the CVSS architecture designed for research and to provide services. :computer:
+### A python module for the CVSS architecture designed for research and service provision :computer:
 
 ## Quick installation guide :coffee: :eyeglasses:
 ```
