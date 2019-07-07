@@ -18,6 +18,31 @@ def _validate_input (input_: str):
                 raise Exception (f'Input: {input_}: is not a valid file.')
 
 
+def grayscale_conversion_args(input_: str, output_name_: str) -> list:
+        """Convert a video into grayscale
+
+        Example ffmpeg command:
+        ffmpeg -hide_banner -y -i input/video.mov -vf hue=s=0 -vcodec libx264 -acodec copy -copyts -muxdelay 0 output/video.mp4
+        
+        Arguments:
+            input_ {str} -- path/to/and/including/input/videoName
+            output_name_ {str} -- path/to/and/including/output/videoName
+
+        Returns:
+            list -- A List of the arguments needed to make a ffmpeg subprocess call
+            Note: Decorators can handle the call
+        """
+        _validate_input(input_)
+
+        args_base = FFMPEG_INPUT_PROCESS_BASE
+        args = [input_, '-vf', 'hue=s=0', '-vcodec', 'libx264', '-acodec', 'copy',
+                '-copyts', '-muxdelay', '0', os.path.abspath(output_name_)]
+
+        args_base.extend(args)
+
+        return args_base
+
+
 def scale_video_args(input_: str, output_name_: str, scale_: str) -> list:
         """Scale a video to a different resolution
 

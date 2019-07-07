@@ -7,6 +7,15 @@ from pathlib import Path
 
 
 ######################################################################################
+# Keys
+OUTPUT_MP4 = 'mp4'
+OUTPUT_MKV = 'mkv'
+OUTPUT_NAME_GRAYSCALE = 'convert_grayscale'
+OUTPUT_NAME_SCALE_VID = 'scale_video'
+OUTPUT_NAME_ENCODE_ADJUST = 'encode_and_adjust'
+OUTPUT_NAME_MOD_STREAM = 'modify_stream'
+OUTPUT_NAME_ENCODE_HW_ACCEL = "encode_with_hw_accel"
+
 # Current working directory
 CURRENT_DIR = os.getcwd()
 
@@ -17,23 +26,23 @@ def _file(output_file_: str) -> str:
 
 
 # Output files with the current path prepended to them
-OUTPUT_FILES = [
-    _file('output_1.mp4'),
-    _file('output_2.mp4'),
-    _file('output_1.mkv'),
-    _file('output_3.mp4')
-]
+OUTPUT_FILES = {
+    OUTPUT_MP4: _file('output.mp4'),
+    OUTPUT_MKV: _file('output.mkv'),
+}
 
 # Benchmarking function calls
 BENCHMARK_FUNCTIONS = {
-    'scale_video': lambda: calls.call_log_args(lambda: fp_args.scale_video_args(
-        sample_files.SAMPLE_VIDEO_1, OUTPUT_FILES[0], '1280:720')),
-    'encode_and_adjust': lambda: calls.call_log_args(lambda: fp_args.encode_and_adjust_args(
-        sample_files.SAMPLE_VIDEO_2, OUTPUT_FILES[1], bitrate_=1, fps_=30, scale_=720)),
-    'modify_stream': lambda: calls.call_log_args(lambda: fp_args.modify_stream_args(
-        sample_files.SAMPLE_VIDEO_3, OUTPUT_FILES[2], '00:00:02', 5)),
-    'encode_with_gpu_cuda_accel': lambda: calls.call_log_args(lambda: fp_args.hw_accel_encode(
-        sample_files.SAMPLE_VIDEO_5, OUTPUT_FILES[3], 6, 10))
+    OUTPUT_NAME_GRAYSCALE: lambda: calls.call_log_args(lambda: fp_args.grayscale_conversion_args(
+        sample_files.SAMPLE_VIDEO_PPRESS, OUTPUT_FILES[OUTPUT_MP4])),
+    OUTPUT_NAME_SCALE_VID: lambda: calls.call_log_args(lambda: fp_args.scale_video_args(
+        sample_files.SAMPLE_VIDEO_PPRESS, OUTPUT_FILES[OUTPUT_MP4], '1280:720')),
+    OUTPUT_NAME_ENCODE_ADJUST: lambda: calls.call_log_args(lambda: fp_args.encode_and_adjust_args(
+        sample_files.SAMPLE_VIDEO_PPRESS, OUTPUT_FILES[OUTPUT_MKV], bitrate_=1, fps_=30, scale_=720)),
+    OUTPUT_NAME_MOD_STREAM: lambda: calls.call_log_args(lambda: fp_args.modify_stream_args(
+        sample_files.SAMPLE_VIDEO_DOGS, OUTPUT_FILES[OUTPUT_MP4], '00:00:02', 5)),
+    OUTPUT_NAME_ENCODE_HW_ACCEL: lambda: calls.call_log_args(lambda: fp_args.hw_accel_encode(
+        sample_files.SAMPLE_VIDEO_HD_MOV, OUTPUT_FILES[OUTPUT_MP4], 6, 10))
 }
 
 
@@ -60,6 +69,16 @@ def _format_output (str_: str):
 if __name__ == "__main__":
     # Benchmarking outside of pytest-benchmark
 
+    #TODO A copy of the input file will have to be made before each test is run. Possibly create a benchmark or test class
+    # which will handle the creation of a test with the given steps:
+    # Copy the input file
+    # Start benchmark
+    # Process input file
+    # End benchmark
+    # Cleanup output file
+    # Cache results
+    # This needs to be done because ffmpeg cannot edit in place with the same input files
+
     results = list()
     list(map(lambda x: results.append (x), [str('['+ name + ': ' + str(call()) + 's]') for (name, call) in BENCHMARK_FUNCTIONS.items()]))
 
@@ -70,4 +89,4 @@ if __name__ == "__main__":
     print()
 
     # Clean up output files
-    list(map(lambda x: _handle_test_cleanup(x), OUTPUT_FILES))
+    list(map(lambda x: _handle_test_cleanup(x[1]), OUTPUT_FILES.items ()))
