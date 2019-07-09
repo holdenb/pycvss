@@ -1,7 +1,34 @@
 import os
+import shutil
+import tempfile
 import subprocess
 import time 
 import math 
+
+
+# File formats
+FILE_FORMATS = [
+    'MP4', 'mp4', 'M4P', 'M4B', 'M4R', 'M4V',
+    'M4A', 'DIVX','EVO', 'F4V', 'FLV',
+    'AVI', 'QT', 'MXF', 'MOV', 'mov', 'MTS',
+    'M2TS','MPEG', 'VOB', 'IFO']
+
+
+######################################################################################
+# Utility classes
+class TemporaryCopy():
+    def __init__(self, original_path_: str):
+        self._original_path = original_path_
+
+    def __enter__(self):
+        temp_dir = tempfile.gettempdir()
+        base_path = os.path.basename(self._original_path)
+        self._path = os.path.join(temp_dir,base_path)
+        shutil.copy2(self._original_path, self._path)
+        return self._path
+
+    def __exit__(self,exc_type, exc_val, exc_tb):
+        os.remove(self._path)
 
 
 ######################################################################################
