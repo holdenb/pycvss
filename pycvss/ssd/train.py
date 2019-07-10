@@ -1,7 +1,7 @@
 from data import *
-from utils.augmentations import SSDAugmentation
-from layers.modules import MultiBoxLoss
-from ssd import build_ssd
+from pycvss.ssd.utils.augmentations import SSDAugmentation
+from pycvss.ssd.layers.modules import MultiBoxLoss
+from pycvss.ssd.ssd import build_ssd
 import os
 import sys
 import time
