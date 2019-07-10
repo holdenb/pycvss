@@ -24,8 +24,16 @@ class BTest:
     def __init__(self, name_: str, args_func_, input_file_: str=None, output_file_:str=None):
         self._name = name_
         self._args_func = args_func_
-        self._input_file = None or input_file_
-        self._output_file = None or output_file_
+
+        if input_file_ is None:
+            self._input_file = None
+        else:
+            self.input_file = input_file_
+
+        if output_file_ is None:
+            self._output_file = None
+        else:
+            self.output_file = output_file_
 
     @property
     def input_file(self):
