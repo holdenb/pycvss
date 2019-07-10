@@ -8,7 +8,6 @@ import torchvision.transforms as transforms
 import cv2
 import numpy as np
 
-#COCO_ROOT = osp.join(HOME, 'data/coco/')
 COCO_ROOT = DATA_DIR = os.path.join(
     os.path.dirname(os.path.realpath(os.path.dirname(__file__))), 'data')
 
@@ -44,7 +43,7 @@ def get_label_map(label_file):
 
 class COCOAnnotationTransform(object):
     """Transforms a COCO annotation into a Tensor of bbox coords and label index
-    Initilized with a dictionary lookup of classnames to indexes
+    Initialized with a dictionary lookup of classnames to indexes
     """
     def __init__(self):
         self.label_map = get_label_map(osp.join(COCO_ROOT, 'coco_labels.txt'))
