@@ -38,31 +38,36 @@ if __name__ == "__main__":
     tests = [
         benchmark.BTest(
             OUTPUT_NAME_GRAYSCALE,
-            lambda: args.grayscale_conversion_args(sample_files.SAMPLE_VIDEO_PPRESS, OUTPUT_FILES[OUTPUT_MP4]),
+            lambda: args.grayscale_conversion_args(
+                sample_files.SAMPLE_VIDEO_PPRESS, OUTPUT_FILES[OUTPUT_MP4]),
             input_file_=sample_files.SAMPLE_VIDEO_PPRESS, output_file_=OUTPUT_FILES[OUTPUT_MP4]
         ),
 
         benchmark.BTest(
             OUTPUT_NAME_SCALE_VID,
-            lambda: args.scale_video_args(sample_files.SAMPLE_VIDEO_PPRESS, OUTPUT_FILES[OUTPUT_MP4], '1280:720'),
+            lambda: args.scale_video_args(
+                sample_files.SAMPLE_VIDEO_PPRESS, OUTPUT_FILES[OUTPUT_MP4], '1280:720'),
             input_file_=sample_files.SAMPLE_VIDEO_PPRESS, output_file_=OUTPUT_FILES[OUTPUT_MP4]
         ),
 
         benchmark.BTest(
             OUTPUT_NAME_ENCODE_ADJUST,
-            lambda: args.encode_and_adjust_args(sample_files.SAMPLE_VIDEO_PPRESS, OUTPUT_FILES[OUTPUT_MKV], bitrate_=1, fps_=30, scale_=720),
+            lambda: args.encode_and_adjust_args(
+                sample_files.SAMPLE_VIDEO_PPRESS, OUTPUT_FILES[OUTPUT_MKV], bitrate_=1, fps_=30, scale_=720),
             input_file_=sample_files.SAMPLE_VIDEO_PPRESS, output_file_=OUTPUT_FILES[OUTPUT_MKV]
         ),
 
         benchmark.BTest(
             OUTPUT_NAME_MOD_STREAM,
-            lambda: args.modify_stream_args(sample_files.SAMPLE_VIDEO_DOGS, OUTPUT_FILES[OUTPUT_MP4], '00:00:02', 5),
+            lambda: args.modify_stream_args(
+                sample_files.SAMPLE_VIDEO_DOGS, OUTPUT_FILES[OUTPUT_MP4], '00:00:02', 5),
             input_file_=sample_files.SAMPLE_VIDEO_PPRESS, output_file_=OUTPUT_FILES[OUTPUT_MP4]
         ),
 
         benchmark.BTest(
             OUTPUT_NAME_ENCODE_HW_ACCEL,
-            lambda: args.hw_accel_encode(sample_files.SAMPLE_VIDEO_PPRESS, OUTPUT_FILES[OUTPUT_MP4], 6, 10),
+            lambda: args.hw_accel_encode(
+                sample_files.SAMPLE_VIDEO_PPRESS, OUTPUT_FILES[OUTPUT_MP4], 6, 10),
             input_file_=sample_files.SAMPLE_VIDEO_HD_MOV, output_file_=OUTPUT_FILES[OUTPUT_MP4]
         )
     ]

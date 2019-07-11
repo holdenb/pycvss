@@ -1,6 +1,3 @@
-import os
-import sys
-
 import pycvss.ffmpeg.fdcm as fdcm
 import pycvss.sample_files as sample_files
 

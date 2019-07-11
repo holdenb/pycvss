@@ -1,16 +1,12 @@
 import os
-import sys
-import subprocess
-import glob
 import random
 import statistics		
 import time
-import pycvss.ffmpeg.calls as calls
-import pycvss.utils as utils
 from pathlib import Path
+import pycvss.utils as utils
 
 
-'''
+"""
 MIT License
 Copyright (c) 2018 JP Janssen
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,16 +19,10 @@ The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-'''
-
+"""
 
 # NOTE A lot of this code is refactored from:
 # https://github.com/Jpja/FFmpeg-Detect-Copy-Motion/blob/master/fdcm.py
-
-
-######################################################################################
-# Current working directory
-CURRENT_DIR = os.getcwd()
 
 ######################################################################################
 # TODO Refactor this code so the Fdcm is a lot simpler to understand. Also add
@@ -49,8 +39,8 @@ class Fdcm:
 
     The extracted files are lossless copies from the input file bitstream.
     """
-    #basic parameters
-    before_s = 1.2 #2.5              #start copying video N seconds before motion is triggered  
+    # basic parameters
+    before_s = 1.2 #2.5              #start copying video N seconds before motion is triggered
     after_s = 1.2 #2                 #end copying video N seconds after motion has ended
     min_copy_break_s = 1.2 #5.9      #don't stop copying if next motion trigger sooner than this
     ignore_start_s = 1 #2          #seconds don't search for motion in beginning of input file
@@ -58,7 +48,7 @@ class Fdcm:
     generate_output_file = True #set to False if you only want to read logs
     delete_input_file = False   #DANGEROUS, use only if you have COPIES of input files
 
-    #out file parameters
+    # out file parameters
     out_prefix = ''             #begin output filename with this
     out_from_in_start = 2       #substring of input file name. Large number copies entire filename
     out_from_in_end = 0         #substring of end of input file name
@@ -67,11 +57,11 @@ class Fdcm:
     out_lower_case = True       #force lower case filename
     out_delimiter = ''          #e.g. '-' to make filename more readable
 
-    #cmd window log
+    # cmd window log
     print_scores = False        #whether to print frame info (including scene scores)
     ffmpeg_loglevel = 31        #see https://ffmpeg.org/ffmpeg.html#Generic-options
 
-    #advanced filter parameters
+    # advanced filter parameters
     step_len_f = 10 #20             #compare every n frame
     min_threshold_score = 0.0180 #0.0095 #default threshold. a score above indicates motion
     test_duration_s = 3 #7         #seek for a ('motionless'ish') segment this long. threshold automatically adjusts up if necessary (and possible)
@@ -80,52 +70,56 @@ class Fdcm:
     segments_to_start = 2       #this many segments in a row above threshold triggers motion start
     segments_to_end = 6 #10        #this many segments in a row below threshold triggers motion end
 
-    #file checking
-    ffmpeg_check_file_args_pre = ['ffmpeg', '-v', 'debug', '-threads', '8', '-nostats', '-i']
-    ffmpeg_check_file_args_post = ['-f', 'null']
-
     def __init__(self):
+        """[summary]
+        """
         self._input_file = ''
 
     @property
     def input_file(self):
+        """[summary]
+
+        Returns:
+            [type] -- [description]
+        """
         return self._input_file
         
     @input_file.setter
     def input_file(self, input_: str) -> str:
-        f = Path(input_)
-        if f.exists() and not f.is_file():
+        """[summary]
+        
+        Arguments:
+            input_ {str} -- [description]
+        
+        Raises:
+            FileNotFoundError: [description]
+            Exception: [description]
+        
+        Returns:
+            str -- [description]
+        """
+        _file = Path(input_)
+        if _file.exists() and not _file.is_file():
             raise FileNotFoundError(f'Invalid file: {input_}')
 
-        # Use ffmpeg for checking that this file is a video file
-        # TODO Figure out why this interrupts other calls
-        # args = self.ffmpeg_check_file_args_pre
-        # args.extend([f'{input_}'])
-        # args.extend(self.ffmpeg_check_file_args_post)
-
-        # process = subprocess.Popen(
-        #     args, stdout=subprocess.PIPE, universal_newlines=True)
-        # process.wait()
-
-        # If we exit cleanly we'll set the file
-        # self._input_file = input_
-
-        name_parts = f.name.split('.')
+        name_parts = _file.name.split('.')
         if len(name_parts) == 2 and name_parts[1] in utils.FILE_FORMATS:
             self._input_file = input_
         else:
             raise Exception('Invalid file format.')
 
     def process(self):
-        t0 = time.time()
+        """[summary]
+        """
+        t_0 = time.time()
         print(f'Processing: {self.input_file}')
-        
+
         #get scenescores from ffmpeg
         # ffmpeg's scene change detection algo:
         # https://www.luckydinosaur.com/u/ffmpeg-scene-change-Fdcm
 
         # writes to a txt file, parse it into lists, then delete file
-        randint = random.randint(10000,99999)
+        randint = random.randint(10000, 99999)
         temp_file = "temp-scenescores-" + str(randint) + ".txt"
 
         if os.path.isfile(temp_file):
@@ -173,15 +167,16 @@ class Fdcm:
             j = text.find('\n', i)
             f_scene_score.append(float(text[i:j]))
         os.remove(temp_file)
-        
-        #give each frame a median score from +/- N frames
+
+        # give each frame a median score from +/- N frames
         f_median_score = list()
+
         for x in f:
             f_median_score.append(
                 statistics.median(
                     f_scene_score[max(0, x-self.segments_smooth): x + self.segments_smooth+1]))
         
-        #try to increase threshold if no motionless period found 
+        #try to increase threshold if no motionless period found
         file_threshold_score = self.min_threshold_score
 
         while True:
@@ -203,7 +198,7 @@ class Fdcm:
             else:
                 break
 
-        #frame's score indicates CHANGE or not [0,1]
+        # frame's score indicates CHANGE or not [0,1]
         f_change = list()
         for x in f:
             if f_median_score[x] >= file_threshold_score:
@@ -211,9 +206,10 @@ class Fdcm:
             else:
                 f_change.append(0)
         
-        #frame's TRIGGER score [-1,0,+1]
+        # frame's TRIGGER score [-1,0,+1]
         f_trigger = list()
         x_max = len(f) - max(self.segments_to_start, self.segments_to_end)
+
         for x in f:
             if x >= x_max:
                 f_trigger.append(0)
@@ -234,7 +230,7 @@ class Fdcm:
                 else:
                     f_trigger.append(0)
 
-        #based on trigger scores, select "smart" COPY start and end points [-1,0,+1]
+        # based on trigger scores, select "smart" COPY start and end points [-1,0,+1]
         f_copy = list()
         is_copying = 0
         end_time_s = f_pts_time[len(f) - 1]
@@ -244,21 +240,22 @@ class Fdcm:
                 continue
             if x >= x_max or f_pts_time[x] > end_time_s - self.ignore_end_s:
                 if is_copying == 1:
-                    #copy_end_s.append(f_pts_time[x])
+                    # copy_end_s.append(f_pts_time[x])
                     f_copy[x] = -1
                 continue
 
-            #start copy?
+            # start copy?
             if is_copying == 0:
-                if f_pts_time[x] > end_time_s - self.ignore_end_s: #near end, don't make new starting point
+                # near end, don't make new starting point
+                if f_pts_time[x] > end_time_s - self.ignore_end_s:
                     continue
                 if f_trigger[x] == 1:
-                    #copy_start_s.append(f_pts_time[x])
+                    # copy_start_s.append(f_pts_time[x])
                     f_copy[x] = 1
                     is_copying = 1
                     continue
 
-            #end copy?
+            # end copy?
             if is_copying == 1:
                 if f_trigger[x] == -1:
                     can_end = 1
@@ -277,8 +274,8 @@ class Fdcm:
                         f_copy[x] = -1
                         is_copying = 0
                     continue
-        
-        #set copy start and end times
+
+        # set copy start and end times
         copy_start_s = list()
         copy_end_s = list()
         for x in f:
@@ -287,17 +284,19 @@ class Fdcm:
             if f_copy[x] == -1:
                 copy_end_s.append(f_pts_time[x])	            
 
-        #adjust start and end times
+        # adjust start and end times
         for x in range(len(copy_start_s)):
             copy_start_s[x] = max(copy_start_s[x] - self.before_s, 0)
             copy_end_s[x] = min(copy_end_s[x] + self.after_s, end_time_s)
 
-        #print output values
+        # print output values
         if self.print_scores:
             print('*')
             print("Frame;Time;Score;Median;Change;Trigger;Copy")
             for x in f:
-                print(str(f[x]) + ";" + '%.4f' % (f_pts_time[x]) + ";" + '%.4f' % (f_scene_score[x]) + ";" + '%.4f'%(f_median_score[x]) + ";" + str(f_change[x]) + ";" + str(f_trigger[x]) + ';' + str(f_copy[x]))
+                print(str(f[x]) + ";" + '%.4f' % (f_pts_time[x]) + ";"
+                      + '%.4f' % (f_scene_score[x]) + ";" + '%.4f'%(f_median_score[x])
+                      + ";" + str(f_change[x]) + ";" + str(f_trigger[x]) + ';' + str(f_copy[x]))
             
             print(self.input_file)
 
@@ -307,7 +306,9 @@ class Fdcm:
         if len(copy_start_s) > 0:
             print('Nr;Start;End;Duration')	
             for x in range(len(copy_start_s)):
-                print(str(x+1) + ';' + '%.2f' % (copy_start_s[x]) + ';' + '%.2f' % (copy_end_s[x]) + ';' + '%.2f'%(copy_end_s[x] - copy_start_s[x]))
+                print(str(x+1) + ';' + '%.2f' % (copy_start_s[x])
+                      + ';' + '%.2f' % (copy_end_s[x]) + ';'
+                      + '%.2f'%(copy_end_s[x] - copy_start_s[x]))
 
         #copy each motion segment as new file
         # stream is copied; no re-encoding or loss in quality
@@ -355,17 +356,18 @@ class Fdcm:
 
             if self.generate_output_file:
                 os.system(command)
-        
-        #delete input file?
+
+        # delete input file?
         if self.delete_input_file:
             os.remove(self.input_file)
-        
+
         #print time it took to process file
-        t1 = time.time()
-        process_s = t1-t0
+        t_1 = time.time()
+        process_s = t_1-t_0
         times_faster = end_time_s / process_s
+
         print('File processed in '
-            + '%.1f' % (process_s)
-            + 's ('
-            + '%.1f' % (times_faster)
-            + 'x)')
+              + '%.1f' % (process_s)
+              + 's ('
+              + '%.1f' % (times_faster)
+              + 'x)')

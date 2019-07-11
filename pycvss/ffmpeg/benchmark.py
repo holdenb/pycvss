@@ -1,17 +1,31 @@
 import os
 from pathlib import Path
-
 import pycvss.ffmpeg.calls as calls
 import pycvss.utils as utils
 
 
 ######################################################################################
 def prepend_current_dir(output_file_: str) -> str:
-    """Prepends the current path where this script is run, to an output file"""
-    return os.path.join (os.getcwd (), output_file_)
+    """[summary]
+
+    Arguments:
+        output_file_ {str} -- [description]
+
+    Returns:
+        str -- [description]
+    """
+    return os.path.join (os.getcwd(), output_file_)
+
 
 def handle_test_cleanup(output_file_: str) -> bool:
-    """ Handles the cleanup of output files"""
+    """[summary]
+
+    Arguments:
+        output_file_ {str} -- [description]
+
+    Returns:
+        bool -- [description]
+    """
     try:
         output = Path(output_file_)
         os.remove(output)
@@ -21,7 +35,19 @@ def handle_test_cleanup(output_file_: str) -> bool:
 
 ######################################################################################
 class BTest:
-    def __init__(self, name_: str, args_func_, input_file_: str=None, output_file_:str=None):
+    """[summary]
+    """
+    def __init__(self, name_: str, args_func_, input_file_: str=None, output_file_: str=None):
+        """[summary]
+
+        Arguments:
+            name_ {str} -- [description]
+            args_func_ {[type]} -- [description]
+
+        Keyword Arguments:
+            input_file_ {str} -- [description] (default: {None})
+            output_file_ {str} -- [description] (default: {None})
+        """
         self._name = name_
         self._args_func = args_func_
 
@@ -36,37 +62,80 @@ class BTest:
             self.output_file = output_file_
 
     @property
-    def input_file(self):
+    def input_file(self) ->str:
+        """[summary]
+
+        Returns:
+            str -- [description]
+        """
         return self._input_file
 
     @input_file.setter
     def input_file(self, input_: str) -> str:
-        f = Path(input_)
-        if f.exists() and not f.is_file():
+        """[summary]
+
+        Arguments:
+            input_ {str} -- [description]
+
+        Raises:
+            FileNotFoundError: [description]
+            Exception: [description]
+
+        Returns:
+            str -- [description]
+        """
+        _file = Path(input_)
+        if _file.exists() and not _file.is_file():
             raise FileNotFoundError(f'Invalid file: {input_}')
 
-        name_parts = f.name.split('.')
+        name_parts = _file.name.split('.')
         if len(name_parts) == 2 and name_parts[1] in utils.FILE_FORMATS:
             self._input_file = input_
         else:
             raise Exception('Invalid file format.')
 
     @property
-    def output_file(self):
+    def output_file(self) -> str:
+        """[summary]
+
+        Returns:
+            str -- [description]
+        """
         return self._output_file
 
     @output_file.setter
     def output_file(self, output_:str ) -> str:
+        """[summary]
+
+        Arguments:
+            output_ {str} -- [description]
+
+        Raises:
+            Exception: [description]
+            Exception: [description]
+
+        Returns:
+            str -- [description]
+        """
         output_str_list = output_.split('.')
         if len(output_str_list) < 2:
-                raise Exception('No file format specified')
+            raise Exception('No file format specified')
 
         if output_str_list[1] not in utils.FILE_FORMATS:
             raise Exception('Invalid file format.')
 
         self._output_file = output_
 
-    def process(self):
+    def process(self) ->tuple:
+        """[summary]
+
+        Raises:
+            FileNotFoundError: [description]
+            FileNotFoundError: [description]
+
+        Returns:
+            tuple -- [description]
+        """
         if self._input_file is None:
             raise FileNotFoundError('Input file not found.')
 
