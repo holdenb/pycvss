@@ -104,7 +104,7 @@ class BTest:
         return self._output_file
 
     @output_file.setter
-    def output_file(self, output_:str ) -> str:
+    def output_file(self, output_:str) -> str:
         """[summary]
 
         Arguments:
@@ -154,7 +154,7 @@ class BTest:
                     break
 
             args[pos] = input_copy
-            assert(args[pos] == input_copy)
+            assert args[pos] == input_copy
             # call_log_args accepts a function so we'll wrap args in a lambda
             result = calls.call_log_args(lambda: args)
 

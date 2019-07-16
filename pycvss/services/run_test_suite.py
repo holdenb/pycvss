@@ -21,12 +21,12 @@ OUTPUT_FILES = {
 
 
 ######################################################################################
-def print_sep ():
+def print_sep() -> None:
     """Prints a seperator string of 100 characters"""
     print('-' * 100)
 
 
-def _format_output (str_: str):
+def _format_output (str_: str) -> None:
     """Formats printed output"""
     print(str_)
     print_sep()

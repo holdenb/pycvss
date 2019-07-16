@@ -76,25 +76,25 @@ class Fdcm:
         self._input_file = ''
 
     @property
-    def input_file(self):
+    def input_file(self) -> str:
         """[summary]
 
         Returns:
             [type] -- [description]
         """
         return self._input_file
-        
+ 
     @input_file.setter
-    def input_file(self, input_: str) -> str:
+    def input_file(self, input_: str):
         """[summary]
-        
+
         Arguments:
             input_ {str} -- [description]
-        
+
         Raises:
             FileNotFoundError: [description]
             Exception: [description]
-        
+
         Returns:
             str -- [description]
         """
@@ -108,7 +108,7 @@ class Fdcm:
         else:
             raise Exception('Invalid file format.')
 
-    def process(self):
+    def process(self) -> None:
         """[summary]
         """
         t_0 = time.time()
@@ -175,7 +175,7 @@ class Fdcm:
             f_median_score.append(
                 statistics.median(
                     f_scene_score[max(0, x-self.segments_smooth): x + self.segments_smooth+1]))
-        
+
         #try to increase threshold if no motionless period found
         file_threshold_score = self.min_threshold_score
 
@@ -205,7 +205,7 @@ class Fdcm:
                 f_change.append(1)
             else:
                 f_change.append(0)
-        
+
         # frame's TRIGGER score [-1,0,+1]
         f_trigger = list()
         x_max = len(f) - max(self.segments_to_start, self.segments_to_end)
@@ -285,7 +285,7 @@ class Fdcm:
                 copy_end_s.append(f_pts_time[x])	            
 
         # adjust start and end times
-        for x in range(len(copy_start_s)):
+        for x, _ in enumerate(copy_start_s):
             copy_start_s[x] = max(copy_start_s[x] - self.before_s, 0)
             copy_end_s[x] = min(copy_end_s[x] + self.after_s, end_time_s)
 
@@ -297,15 +297,15 @@ class Fdcm:
                 print(str(f[x]) + ";" + '%.4f' % (f_pts_time[x]) + ";"
                       + '%.4f' % (f_scene_score[x]) + ";" + '%.4f'%(f_median_score[x])
                       + ";" + str(f_change[x]) + ";" + str(f_trigger[x]) + ';' + str(f_copy[x]))
-            
+
             print(self.input_file)
 
         print("Threshold: " + str(file_threshold_score))
         print('Copied clips: ' + str(len(copy_start_s)))
 
-        if len(copy_start_s) > 0:
-            print('Nr;Start;End;Duration')	
-            for x in range(len(copy_start_s)):
+        if not copy_start_s:
+            print('Nr;Start;End;Duration')
+            for x, _ in enumerate(copy_start_s):
                 print(str(x+1) + ';' + '%.2f' % (copy_start_s[x])
                       + ';' + '%.2f' % (copy_end_s[x]) + ';'
                       + '%.2f'%(copy_end_s[x] - copy_start_s[x]))
@@ -320,7 +320,7 @@ class Fdcm:
         for i in range(self.out_random_letters):
             out_random += random.choice("abcdefghijkmnopqrstuvwxyz")
 
-        for x in range(len(copy_start_s)):
+        for x, _ in enumerate(copy_start_s):
             while True:
                 file_num += 1
                 out_filename = ''
