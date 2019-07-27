@@ -2,15 +2,16 @@ import os
 from pathlib import Path
 
 
-######################################################################################
-# Defines a group of functions used to provide optimal, ease of use input parameters
+###############################################################################
+# Defines a group of functions used to provide optimal, ease of use input
+# parameters
 # for ffmpeg processess
 
 # FFMPEG input process base arguments
 FFMPEG_INPUT_PROCESS_BASE = ['ffmpeg', '-y', '-i']
 
 
-######################################################################################
+##############################################################################
 def _validate_input(input_: str) -> None:
     input_file = Path(input_)
     if not input_file.is_file():
@@ -119,8 +120,8 @@ def encode_and_adjust_args(
     return args_base
 
 
-def modify_stream_args(
-    input_: str, output_name_: str, cut_point_: str, duration_: int, audio_=False) -> list:
+def modify_stream_args(input_: str, output_name_: str,
+                       cut_point_: str, duration_: int, audio_=False) -> list:
     """Copy video and audio streams and will also trim the video. -t sets the cut duration
     to be N seconds and -ss option set the start point of the video eg. ('00:01:00').
 
@@ -156,7 +157,8 @@ def modify_stream_args(
     return args_base
 
 
-def hw_accel_encode(input_: str, output_name_: str, avg_bitrate_: int, max_bitrate_: int) -> list:
+def hw_accel_encode(input_: str, output_name_: str,
+                    avg_bitrate_: int, max_bitrate_: int) -> list:
     """Uses CUDA GPU hardware acceleration to encode input video streams
 
     Parameter notes:

@@ -4,7 +4,7 @@ import pycvss.sample_files as sample_files
 import pycvss.ssd.detect as detect
 
 
-######################################################################################
+###############################################################################
 def get_args() -> dict:
     """[summary]
 
@@ -18,12 +18,13 @@ def get_args() -> dict:
     return parser.parse_args()
 
 
-######################################################################################
+###############################################################################
 if __name__ == "__main__":
     args = get_args()
     pth_file = args.pth
     if pth_file is None:
-        raise FileNotFoundError("A .pth training file is required to run the SSD.")
+        raise FileNotFoundError(
+            "A .pth training file is required to run the SSD.")
 
     ssd_neural_net = detect.initialize_ssd(pth_file)
     base_transform = detect.get_base_transform(ssd_neural_net)
@@ -34,7 +35,8 @@ if __name__ == "__main__":
     with imageio.get_writer('output.mp4', fps=fps) as frame_writer:
         for (i, frame) in enumerate(frame_reader):
             # Detected frame
-            new_frame = detect.detect_frame(frame, ssd_neural_net.eval(), base_transform)
+            new_frame = detect.detect_frame(
+                frame, ssd_neural_net.eval(), base_transform)
 
             # Append our new detected frame to the new video writer
             frame_writer.append_data(new_frame)

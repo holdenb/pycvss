@@ -24,7 +24,8 @@ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # NOTE A lot of this code is refactored from:
 # https://github.com/Jpja/FFmpeg-Detect-Copy-Motion/blob/master/fdcm.py
 
-######################################################################################
+
+###############################################################################
 # TODO Refactor this code so the Fdcm is a lot simpler to understand. Also add
 # functionality to take multiple input files as per original implementation.
 # Possibly implement parallelism with multi file processing.
@@ -83,7 +84,7 @@ class Fdcm:
             [type] -- [description]
         """
         return self._input_file
- 
+
     @input_file.setter
     def input_file(self, input_: str):
         """[summary]

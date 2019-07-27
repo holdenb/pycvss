@@ -26,7 +26,7 @@ def print_sep() -> None:
     print('-' * 100)
 
 
-def _format_output (str_: str) -> None:
+def _format_output(str_: str) -> None:
     """Formats printed output"""
     print(str_)
     print_sep()

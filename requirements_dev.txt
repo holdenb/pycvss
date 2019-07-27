@@ -1,5 +1,6 @@
 imageio==2.5.0
-imageio-ffmpeg==0.3.0 
+imageio-ffmpeg==0.3.0
+imutils-0.5.2
 opencv-python==4.1.0.25 
 pip==19.0.3
 pytest==4.3.0

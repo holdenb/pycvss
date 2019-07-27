@@ -4,7 +4,7 @@ import pycvss.ffmpeg.calls as calls
 import pycvss.utils as utils
 
 
-######################################################################################
+###############################################################################
 def prepend_current_dir(output_file_: str) -> str:
     """[summary]
 
@@ -14,17 +14,14 @@ def prepend_current_dir(output_file_: str) -> str:
     Returns:
         str -- [description]
     """
-    return os.path.join (os.getcwd(), output_file_)
+    return os.path.join(os.getcwd(), output_file_)
 
 
-def handle_test_cleanup(output_file_: str) -> bool:
+def handle_test_cleanup(output_file_: str):
     """[summary]
 
     Arguments:
         output_file_ {str} -- [description]
-
-    Returns:
-        bool -- [description]
     """
     try:
         output = Path(output_file_)
@@ -33,11 +30,12 @@ def handle_test_cleanup(output_file_: str) -> bool:
         print(f"Skipping file: '{output_file_}': File not found.")
 
 
-######################################################################################
+###############################################################################
 class BTest:
     """[summary]
     """
-    def __init__(self, name_: str, args_func_, input_file_: str=None, output_file_: str=None):
+    def __init__(self, name_: str, args_func_,
+                 input_file_: str=None, output_file_: str=None):
         """[summary]
 
         Arguments:
@@ -71,7 +69,7 @@ class BTest:
         return self._input_file
 
     @input_file.setter
-    def input_file(self, input_: str) -> str:
+    def input_file(self, input_: str):
         """[summary]
 
         Arguments:
@@ -80,9 +78,6 @@ class BTest:
         Raises:
             FileNotFoundError: [description]
             Exception: [description]
-
-        Returns:
-            str -- [description]
         """
         _file = Path(input_)
         if _file.exists() and not _file.is_file():
@@ -104,7 +99,7 @@ class BTest:
         return self._output_file
 
     @output_file.setter
-    def output_file(self, output_:str) -> str:
+    def output_file(self, output_: str) -> str:
         """[summary]
 
         Arguments:
