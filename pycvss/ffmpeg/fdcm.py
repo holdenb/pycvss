@@ -131,6 +131,22 @@ class Fdcm:
         """
         self._output_dir = output_
 
+    def output_file_extension(self) -> str:
+        """[summary]
+
+        Raises:
+            Exception: [description]
+
+        Returns:
+            str -- [description]
+        """
+        if self._input_file is None:
+            raise Exception("Invalid input file.")
+
+        (_, file_extension) = os.path.splitext(self._input_file)
+
+        return file_extension
+
     def process(self) -> None:
         """[summary]
         """

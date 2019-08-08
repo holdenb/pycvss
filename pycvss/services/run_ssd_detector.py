@@ -34,7 +34,7 @@ if __name__ == "__main__":
         sample_files.SAMPLE_VIDEO_RUNNING_DOG_HD)
 
     with imageio.get_writer('output.mp4', fps=fps) as frame_writer:
-        for (i, frame) in enumerate(frame_reader):
+        for i, frame in enumerate(frame_reader):
             # Detected frame
             new_frame = detect.detect_frame(
                 frame, ssd_neural_net.eval(), base_transform)
