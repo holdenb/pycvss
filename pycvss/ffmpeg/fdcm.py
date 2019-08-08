@@ -74,7 +74,8 @@ class Fdcm:
     def __init__(self):
         """[summary]
         """
-        self._input_file = ''
+        self._input_file = None
+        self._output_dir = None
 
     @property
     def input_file(self) -> str:
@@ -109,6 +110,27 @@ class Fdcm:
         else:
             raise Exception('Invalid file format.')
 
+    @property
+    def output_dir(self) -> str:
+        """[summary]
+
+        Returns:
+            str -- [description]
+        """
+        return self._output_dir
+
+    @output_dir.setter
+    def output_dir(self, output_) -> None:
+        """[summary]
+
+        Arguments:
+            output_ {[type]} -- [description]
+
+        Returns:
+            None -- [description]
+        """
+        self._output_dir = output_
+
     def process(self) -> None:
         """[summary]
         """
@@ -136,7 +158,7 @@ class Fdcm:
             + temp_file \
             + " -an -f null -"
 
-        print('Run command: ' + command)	
+        print('Run command: ' + command)
         os.system(command)
 
         f = list()
@@ -321,23 +343,22 @@ class Fdcm:
         for i in range(self.out_random_letters):
             out_random += random.choice("abcdefghijkmnopqrstuvwxyz")
 
+        # Create output directory if one has been set
+        if self._output_dir is not None:
+            if not os.path.exists(self._output_dir):
+                os.makedirs(self._output_dir)
+
+        path_prefix = self._output_dir if self._output_dir is not None else ''
+
         for x, _ in enumerate(copy_start_s):
             while True:
                 file_num += 1
-                out_filename = ''
-                if self.out_prefix != '':
-                    out_filename += self.out_prefix + self.out_delimiter
-                if self.out_from_in_start > 0:
-                    out_filename += in_filename[:self.out_from_in_start] + self.out_delimiter
-                if self.out_from_in_end > 0:
-                    out_filename += in_filename[-self.out_from_in_end:] + self.out_delimiter
-                if self.out_random_letters > 0:
-                    out_filename += out_random + self.out_delimiter
+                out_filename = path_prefix + os.sep
                 out_filename += str(file_num).zfill(self.out_counter_digits)
                 out_filename += file_extension
                 if self.out_lower_case:
                     out_filename = out_filename.lower()
-                if os.path.isfile(out_filename) == False:
+                if os.path.isfile(out_filename) is False:
                     break
 
             clip_length = copy_end_s[x] - copy_start_s[x]

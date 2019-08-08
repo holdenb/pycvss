@@ -37,6 +37,18 @@ class TemporaryCopy():
 ######################################################################################
 # Utility functions
 
+def get_current_path() -> str:
+    """[summary]
+
+    Returns:
+        str -- [description]
+    """
+    curr_path_including_file = os.path.realpath(__file__)
+    path_list = curr_path_including_file.split('/')
+    path_list.pop()
+    return '/'.join(path_list)
+
+
 def dec_calculate_time(func_):
     """Decorator for benchmarking a single function call
 

@@ -19,7 +19,7 @@ def get_args() -> dict:
         dict -- [description]
     """
     parser = argparse.ArgumentParser(
-        description='Single Shot MultiBox Detection')
+        description='Live Single Shot MultiBox Detection')
 
     parser.add_argument('--weights', default='weights/ssd_300_VOC0712.pth',
                         type=str, help='Trained state_dict file path')

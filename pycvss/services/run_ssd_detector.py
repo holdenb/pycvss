@@ -11,7 +11,8 @@ def get_args() -> dict:
     Returns:
         dict -- [description]
     """
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description='Single Shot MultiBox Detection')
     parser.add_argument('-p', '--pth', type=str, default=None,
                         help="The path to the .pth SSD training model file.")
 
