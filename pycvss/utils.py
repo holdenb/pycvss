@@ -16,7 +16,8 @@ FILE_FORMATS = [
 ######################################################################################
 # Utility classes
 class TemporaryCopy():
-    """[summary]
+    """This object encapsulates the creation of a temporary
+    copy of a file. This object is used as a context.
     """
     def __init__(self, original_path_: str):
         self._original_path = original_path_
@@ -38,10 +39,10 @@ class TemporaryCopy():
 # Utility functions
 
 def get_current_path() -> str:
-    """[summary]
+    """Gets the path of the current file being executed
 
     Returns:
-        str -- [description]
+        str -- A string containing the filepath
     """
     curr_path_including_file = os.path.realpath(__file__)
     path_list = curr_path_including_file.split('/')

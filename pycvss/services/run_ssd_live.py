@@ -13,10 +13,10 @@ FONT = cv2.FONT_HERSHEY_SIMPLEX
 
 ###############################################################################
 def get_args() -> dict:
-    """[summary]
+    """Get arguments from the parser
 
     Returns:
-        dict -- [description]
+        dict -- A dictionary containing arguments
     """
     parser = argparse.ArgumentParser(
         description='Live Single Shot MultiBox Detection')

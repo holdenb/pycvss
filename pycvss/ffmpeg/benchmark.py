@@ -5,46 +5,46 @@ import pycvss.utils as utils
 
 
 ###############################################################################
-def prepend_current_dir(output_file_: str) -> str:
-    """[summary]
+def prepend_current_dir(file_: str) -> str:
+    """Prepent the current working directory to a file
 
     Arguments:
-        output_file_ {str} -- [description]
+        file_ {str} -- File to be prepented to
 
     Returns:
-        str -- [description]
+        str -- A string containing the new file path
     """
-    return os.path.join(os.getcwd(), output_file_)
+    return os.path.join(os.getcwd(), file_)
 
 
-def handle_test_cleanup(output_file_: str):
-    """[summary]
+def handle_file_cleanup(file_: str):
+    """Handles cleanup of a file
 
     Arguments:
-        output_file_ {str} -- [description]
+        file_ {str} -- File to be cleaned up
     """
     try:
-        output = Path(output_file_)
+        output = Path(file_)
         os.remove(output)
     except FileNotFoundError:
-        print(f"Skipping file: '{output_file_}': File not found.")
+        print(f"Skipping file: '{file_}': File not found.")
 
 
 ###############################################################################
 class BTest:
-    """[summary]
+    """Object that encapsulates a benchmark test, a benchmark test allows
+    for an input function to be benchmarked.
     """
     def __init__(self, name_: str, args_func_,
                  input_file_: str=None, output_file_: str=None):
-        """[summary]
-
+        """
         Arguments:
-            name_ {str} -- [description]
-            args_func_ {[type]} -- [description]
+            name_ {str} -- Name of the function
+            args_func_ {[type]} -- Function to test
 
         Keyword Arguments:
-            input_file_ {str} -- [description] (default: {None})
-            output_file_ {str} -- [description] (default: {None})
+            input_file_ {str} -- Input file (default: {None})
+            output_file_ {str} -- Output file (default: {None})
         """
         self._name = name_
         self._args_func = args_func_
@@ -61,24 +61,10 @@ class BTest:
 
     @property
     def input_file(self) ->str:
-        """[summary]
-
-        Returns:
-            str -- [description]
-        """
         return self._input_file
 
     @input_file.setter
     def input_file(self, input_: str):
-        """[summary]
-
-        Arguments:
-            input_ {str} -- [description]
-
-        Raises:
-            FileNotFoundError: [description]
-            Exception: [description]
-        """
         _file = Path(input_)
         if _file.exists() and not _file.is_file():
             raise FileNotFoundError(f'Invalid file: {input_}')
@@ -91,27 +77,10 @@ class BTest:
 
     @property
     def output_file(self) -> str:
-        """[summary]
-
-        Returns:
-            str -- [description]
-        """
         return self._output_file
 
     @output_file.setter
     def output_file(self, output_: str) -> str:
-        """[summary]
-
-        Arguments:
-            output_ {str} -- [description]
-
-        Raises:
-            Exception: [description]
-            Exception: [description]
-
-        Returns:
-            str -- [description]
-        """
         output_str_list = output_.split('.')
         if len(output_str_list) < 2:
             raise Exception('No file format specified')
@@ -122,14 +91,15 @@ class BTest:
         self._output_file = output_
 
     def process(self) ->tuple:
-        """[summary]
+        """Presses the test
 
         Raises:
-            FileNotFoundError: [description]
-            FileNotFoundError: [description]
+            FileNotFoundError: If the input or output file
+            do not exist
 
         Returns:
-            tuple -- [description]
+            tuple -- A tuple containing the name of the test and the result
+            of the benchmark
         """
         if self._input_file is None:
             raise FileNotFoundError('Input file not found.')
@@ -154,6 +124,6 @@ class BTest:
             result = calls.call_log_args(lambda: args)
 
         # Clean up output file
-        handle_test_cleanup(prepend_current_dir(self._output_file))
+        handle_file_cleanup(prepend_current_dir(self._output_file))
 
         return (self._name, result)

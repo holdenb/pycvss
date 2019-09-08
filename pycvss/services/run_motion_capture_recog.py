@@ -11,10 +11,10 @@ from pathlib import Path
 
 ###############################################################################
 def get_args() -> dict:
-    """[summary]
+    """Get arguments from the parser
 
     Returns:
-        dict -- [description]
+        dict -- A dictionary of arguments
     """
     parser = argparse.ArgumentParser(
         description='Single Shot MultiBox Detection using motion capture filtering.')
@@ -36,13 +36,14 @@ def get_args() -> dict:
 
 
 class MotionDetectionManager:
-    """[summary]
+    """Manages FDCM and SSD modules. This object will process a video
+    into segments, and then apply object classification to each frame in each
+    segmented video.
     """
     def __init__(self, weights_file_: str):
-        """[summary]
-
+        """
         Arguments:
-            weights_file_ {str} -- [description]
+            weights_file_ {str} -- SSD weights file
         """
         # Initial setup of the SSD and fdcm detector
         # SSD neural network
@@ -58,27 +59,10 @@ class MotionDetectionManager:
 
     @property
     def input_file(self) -> str:
-        """[summary]
-
-        Returns:
-            [type] -- [description]
-        """
         return self._input_file
 
     @input_file.setter
     def input_file(self, input_: str) -> None:
-        """[summary]
-
-        Arguments:
-            input_ {str} -- [description]
-
-        Raises:
-            FileNotFoundError: [description]
-            Exception: [description]
-
-        Returns:
-            str -- [description]
-        """
         _file = Path(input_)
         if _file.exists() and not _file.is_file():
             raise FileNotFoundError(f'Invalid file: {input_}')
@@ -98,10 +82,11 @@ class MotionDetectionManager:
         self._output_dir = output_
 
     def detect(self):
-        """[summary]
+        """Run detection on the input file
 
         Raises:
-            Exception: [description]
+            Exception: If the input file or output directory
+            do not exist
         """
         if self._input_file is None or self._output_dir is None:
             raise Exception(
@@ -131,12 +116,14 @@ class MotionDetectionManager:
 
                     # Append our detected frame to the video writer
                     frame_writer.append_data(detected_frame)
+                    print(f'File: {file_name}: Processing frame: {i}')
 
         # Iterate through the directory contents and run frame by frame object
         # detection using our SSD
         target_file_extension = self._detector.output_file_extension()
         for filename in os.listdir(self._output_dir):
             if filename.endswith(target_file_extension):
+                #TODO multi-thread this using the multiprocess module
                 run_ssd_detection(self._output_dir + '/' + filename, filename)
                 # Clean up old file after we're finished
                 # os.remove(os.path.join(self._output_dir, filename))

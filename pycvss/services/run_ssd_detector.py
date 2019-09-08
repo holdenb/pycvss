@@ -6,10 +6,10 @@ import pycvss.ssd.detect as detect
 
 ###############################################################################
 def get_args() -> dict:
-    """[summary]
+    """Get arguments from the parser
 
     Returns:
-        dict -- [description]
+        dict -- Dictionary containing arguments
     """
     parser = argparse.ArgumentParser(
         description='Single Shot MultiBox Detection')

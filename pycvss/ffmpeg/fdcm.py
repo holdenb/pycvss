@@ -72,34 +72,15 @@ class Fdcm:
     segments_to_end = 6 #10        #this many segments in a row below threshold triggers motion end
 
     def __init__(self):
-        """[summary]
-        """
         self._input_file = None
         self._output_dir = None
 
     @property
     def input_file(self) -> str:
-        """[summary]
-
-        Returns:
-            [type] -- [description]
-        """
         return self._input_file
 
     @input_file.setter
     def input_file(self, input_: str):
-        """[summary]
-
-        Arguments:
-            input_ {str} -- [description]
-
-        Raises:
-            FileNotFoundError: [description]
-            Exception: [description]
-
-        Returns:
-            str -- [description]
-        """
         _file = Path(input_)
         if _file.exists() and not _file.is_file():
             raise FileNotFoundError(f'Invalid file: {input_}')
@@ -112,33 +93,20 @@ class Fdcm:
 
     @property
     def output_dir(self) -> str:
-        """[summary]
-
-        Returns:
-            str -- [description]
-        """
         return self._output_dir
 
     @output_dir.setter
     def output_dir(self, output_) -> None:
-        """[summary]
-
-        Arguments:
-            output_ {[type]} -- [description]
-
-        Returns:
-            None -- [description]
-        """
         self._output_dir = output_
 
     def output_file_extension(self) -> str:
-        """[summary]
+        """Get the output file extension
 
         Raises:
-            Exception: [description]
+            Exception: If the input file does not exist
 
         Returns:
-            str -- [description]
+            str -- A string containing the file extension
         """
         if self._input_file is None:
             raise Exception("Invalid input file.")
@@ -148,7 +116,7 @@ class Fdcm:
         return file_extension
 
     def process(self) -> None:
-        """[summary]
+        """Process the input using the FDCM motion capture algorithm
         """
         t_0 = time.time()
         print(f'Processing: {self.input_file}')

@@ -9,16 +9,16 @@ from pycvss.ssd.data import VOC_CLASSES as labelmap
 
 ######################################################################################
 def initialize_ssd(pth_file_: str, test_phase_=True) -> ssd.SSD:
-    """[summary]
+    """Initialize the SSD
 
     Arguments:
-        pth_file_ {str} -- [description]
+        pth_file_ {str} -- SSD PTH training file
 
     Keyword Arguments:
-        test_phase_ {bool} -- [description] (default: {True})
+        test_phase_ {bool} -- Should this run in a test phase? (default: {True})
 
     Returns:
-        ssd.SSD -- [description]
+        ssd.SSD -- Initialized SSD object
     """
     phase = 'test'
     if not test_phase_:
@@ -34,25 +34,25 @@ def initialize_ssd(pth_file_: str, test_phase_=True) -> ssd.SSD:
 
 
 def get_base_transform(n_net: ssd.SSD) -> BaseTransform:
-    """[summary]
+    """Creates a base transform tensor
 
     Arguments:
-        n_net {ssd.SSD} -- [description]
+        n_net {ssd.SSD} -- SSD neural network
 
     Returns:
-        BaseTransform -- [description]
+        BaseTransform -- A base transform tensor
     """
     return BaseTransform(n_net.size, (104.0 / 256.0, 117.0 / 256.0, 123.0 / 256.0))
 
 
 def get_reader_fps_pair_from_stream(input_file_: str) -> tuple:
-    """[summary]
+    """Creates a pair containing a reader and the fps of a video
 
     Arguments:
-        input_file_ {str} -- [description]
+        input_file_ {str} -- Input file to create reader from
 
     Returns:
-        tuple -- [description]
+        tuple -- Tuple containing the imageio reader and the fps metadata
     """
     _reader = imageio.get_reader(input_file_)
     _fps = _reader.get_meta_data()['fps']
@@ -61,15 +61,15 @@ def get_reader_fps_pair_from_stream(input_file_: str) -> tuple:
 
 
 def detect_frame(frame_, n_net_: ssd.SSD, transform_: BaseTransform):
-    """[summary]
+    """Uses the SSD neural network to detect a given frame from a video
 
     Arguments:
-        frame_ {[type]} -- [description]
-        n_net_ {ssd.SSD} -- [description]
-        transform_ {BaseTransform} -- [description]
+        frame_ {[type]} -- The frame to detect
+        n_net_ {ssd.SSD} -- The intialized SSD
+        transform_ {BaseTransform} -- The SSD basetransform tensor
 
     Returns:
-        frame_ -- [description]
+        frame_ -- The newly detected frame
     """
      # Take range from [0,2) / we do not need the channel
     (height, width) = frame_.shape[:2]
