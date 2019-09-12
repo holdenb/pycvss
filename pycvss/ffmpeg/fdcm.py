@@ -63,9 +63,9 @@ class Fdcm:
     ffmpeg_loglevel = 31        #see https://ffmpeg.org/ffmpeg.html#Generic-options
 
     # advanced filter parameters
-    step_len_f = 10 #20             #compare every n frame
-    min_threshold_score = 0.0180 #0.0095 #default threshold. a score above indicates motion
-    test_duration_s = 3 #7         #seek for a ('motionless'ish') segment this long. threshold automatically adjusts up if necessary (and possible)
+    step_len_f = 20 #20             #compare every n frame
+    min_threshold_score = 0.0095 #0.0095 #default threshold. a score above indicates motion
+    test_duration_s = 7 #7         #seek for a ('motionless'ish') segment this long. threshold automatically adjusts up if necessary (and possible)
     max_threshold_score = 0.04
     segments_smooth = 0         #assign median score from n segments before and after to smooth out scores
     segments_to_start = 2       #this many segments in a row above threshold triggers motion start

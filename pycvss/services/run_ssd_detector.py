@@ -31,7 +31,7 @@ if __name__ == "__main__":
     base_transform = detect.get_base_transform(ssd_neural_net)
 
     (frame_reader, fps) = detect.get_reader_fps_pair_from_stream(
-        sample_files.SAMPLE_VIDEO_RUNNING_DOG_HD)
+        sample_files.SAMPLE_VIDEO_BRIDGE)
 
     with imageio.get_writer('output.mp4', fps=fps) as frame_writer:
         for i, frame in enumerate(frame_reader):
