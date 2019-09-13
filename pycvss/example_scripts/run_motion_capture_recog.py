@@ -17,7 +17,8 @@ def get_args() -> dict:
         dict -- A dictionary of arguments
     """
     parser = argparse.ArgumentParser(
-        description='Single Shot MultiBox Detection using motion capture filtering.')
+        description='Single Shot MultiBox Detection using motion'
+        ' capture filtering.')
 
     parser.add_help
 
@@ -68,7 +69,8 @@ class MotionDetectionManager:
             raise FileNotFoundError(f'Invalid file: {input_}')
 
         name_parts = _file.name.split('.')
-        if len(name_parts) == 2 and name_parts[1] in utils.FILE_FORMATS:
+        if len(name_parts) == 2 and \
+           name_parts[1].upper() in utils.FILE_FORMATS:
             self._input_file = input_
         else:
             raise Exception('Invalid file format.')

@@ -1,6 +1,6 @@
 import pycvss.ffmpeg.benchmark as benchmark
 import pycvss.sample_files as sample_files
-import pycvss.ffmpeg.process_args as args
+import pycvss.ffmpeg.bindings as args
 
 
 ###############################################################################

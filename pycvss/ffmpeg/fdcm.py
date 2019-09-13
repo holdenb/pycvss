@@ -44,7 +44,7 @@ class Fdcm:
     before_s = 1.2 #2.5              #start copying video N seconds before motion is triggered
     after_s = 1.2 #2                 #end copying video N seconds after motion has ended
     min_copy_break_s = 1.2 #5.9      #don't stop copying if next motion trigger sooner than this
-    ignore_start_s = 1 #2          #seconds don't search for motion in beginning of input file
+    ignore_start_s = 1 #2           #seconds don't search for motion in beginning of input file
     ignore_end_s = 1 #2            #seconds don't search for motion at end of input file
     generate_output_file = True #set to False if you only want to read logs
     delete_input_file = False   #DANGEROUS, use only if you have COPIES of input files
@@ -86,7 +86,7 @@ class Fdcm:
             raise FileNotFoundError(f'Invalid file: {input_}')
 
         name_parts = _file.name.split('.')
-        if len(name_parts) == 2 and name_parts[1] in utils.FILE_FORMATS:
+        if len(name_parts) == 2 and name_parts[1].upper() in utils.FILE_FORMATS:
             self._input_file = input_
         else:
             raise Exception('Invalid file format.')

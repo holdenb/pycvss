@@ -70,7 +70,7 @@ class BTest:
             raise FileNotFoundError(f'Invalid file: {input_}')
 
         name_parts = _file.name.split('.')
-        if len(name_parts) == 2 and name_parts[1] in utils.FILE_FORMATS:
+        if len(name_parts) == 2 and name_parts[1].upper() in utils.FILE_FORMATS:
             self._input_file = input_
         else:
             raise Exception('Invalid file format.')
@@ -85,7 +85,7 @@ class BTest:
         if len(output_str_list) < 2:
             raise Exception('No file format specified')
 
-        if output_str_list[1] not in utils.FILE_FORMATS:
+        if output_str_list[1].upper() not in utils.FILE_FORMATS:
             raise Exception('Invalid file format.')
 
         self._output_file = output_

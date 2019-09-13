@@ -6,14 +6,15 @@ import time
 
 
 # File formats
+# TODO add a more agnostic approach to format checking
 FILE_FORMATS = [
-    'MP4', 'mp4', 'M4P', 'M4B', 'M4R', 'M4V',
+    'MP4', 'M4P', 'M4B', 'M4R', 'M4V',
     'M4A', 'DIVX', 'EVO', 'F4V', 'FLV',
-    'AVI', 'QT', 'MXF', 'MOV', 'mov', 'MTS',
+    'AVI', 'QT', 'MXF', 'MOV', 'MTS',
     'M2TS', 'MPEG', 'VOB', 'IFO']
 
 
-######################################################################################
+###############################################################################
 # Utility classes
 class TemporaryCopy():
     """This object encapsulates the creation of a temporary
@@ -35,7 +36,7 @@ class TemporaryCopy():
         os.remove(self._path)
 
 
-######################################################################################
+###############################################################################
 # Utility functions
 
 def get_current_path() -> str:
@@ -111,7 +112,8 @@ def execute(cmd_: list) -> None:
     Raises:
     subprocess.CalledProcessError
     """
-    popen = subprocess.Popen(cmd_, stdout=subprocess.PIPE, universal_newlines=True)
+    popen = subprocess.Popen(
+        cmd_, stdout=subprocess.PIPE, universal_newlines=True)
 
     for stdout_line in iter(popen.stdout.readline, ""):
         yield stdout_line
