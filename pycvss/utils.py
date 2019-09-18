@@ -16,6 +16,7 @@ FILE_FORMATS = [
 
 ###############################################################################
 # Utility classes
+
 class TemporaryCopy():
     """This object encapsulates the creation of a temporary
     copy of a file. This object is used as a context.
@@ -51,6 +52,26 @@ def get_current_path() -> str:
     return '/'.join(path_list)
 
 
+def dec_singleton(cls_: object):
+    """Singleton Class decorator function
+
+    Arguments:
+    cls_ {object} -- Object to decorate as a Singleton
+
+    Returns:
+        object -- Instance of the wrapped object
+    """
+    instances = {}
+
+    def getinstance():
+        if cls_ not in instances:
+            instances[cls_] = cls_()
+
+        return instances[cls_]
+
+    return getinstance
+
+
 def dec_calculate_time(func_):
     """Decorator for benchmarking a single function call
 
@@ -60,7 +81,7 @@ def dec_calculate_time(func_):
             pass
 
     Arguments:
-    func {function} -- Function to benchmark
+    func_ {function} -- Function to benchmark
 
     Returns:
     function -- The decorated function
@@ -87,7 +108,7 @@ def dec_exec_output_stream(func_):
             return args
 
     Arguments:
-    func {function} -- Function that returns arguments
+    func_ {function} -- Function that returns arguments
             that we should execute and then print process
             stdout
 
