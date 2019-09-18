@@ -57,6 +57,7 @@ class ServiceManager:
         # Command context that is passed to each Service
         # The command context is dictionary of all subcommands implemented by
         # each registered service.
+        # NOTE keys in the command_context are the defined service names
         command_context = {}
 
         # List of registered services
@@ -64,6 +65,10 @@ class ServiceManager:
             MotionCaptureService(command_context),
             ClassificationService(command_context)
         ]
+
+        # List of service types that are available after services are
+        # registered.
+        self.serviceTypes = list(command_context.keys())
 
         self.__handler.set_subcommands(command_context)
         self.__handler.run()
