@@ -1,13 +1,36 @@
 
-
+import imageio
 from abc import ABC, abstractmethod
 from arghandler import *
 
-from pycvss.utils import dec_singleton
+import pycvss.ffmpeg.fdcm as fdcm
+import pycvss.ssd.detect as detect
+from pycvss.utils import check_filepath, dec_singleton
+
+
+###############################################################################
+# Helper functions
+
+def add_parse_filepath(parser_, arg_: str,
+                       arg_context_: str, help_: str=None) -> None:
+    # TODO doc
+    if '-' not in arg_ or '--' not in arg_context_:
+        raise Exception('Invalid argument or context argument.')
+    parser_.add_argument(
+            arg_, arg_context_, type=str,
+            default=None, required=True, help=help_
+    )
+
+
+def validate_file(input_file_: str, name_: str) -> None:
+    # TODO doc
+    if not check_filepath(input_file_):
+        raise FileNotFoundError(f'{name_} is invalid or not found.')
 
 
 ###############################################################################
 class Service(ABC):
+    # TODO doc
     def __init__(self, type_: str, command_context_: dict):
         super().__init__()
         self.type = type_
@@ -21,39 +44,102 @@ class Service(ABC):
 
 ###############################################################################
 class MotionCaptureService(Service):
+    """Motion capture service object
+
+    Ex call:
+    py run_service.py motioncapture
+        -i ..\..\data\sample_video\paris_people_bridge00_preview.mp4
+        -o output.mp4
+    """
     def __init__(self, command_context: dict):
         super().__init__('motioncapture', command_context)
 
     @staticmethod
-    def process(parser_, context_, args_):
-        parser_.add_argument('-rmc', '--run_motion_capture', required=True)
+    def process(parser_, context_, args_) -> None:
+        # TODO doc
+        add_parse_filepath(
+            parser_, '-i', '--input',
+            help_='Input file that will be processed.'
+        )
+        add_parse_filepath(
+            parser_, '-o', '--output',
+            help_='Output directory for captured motion.'
+        )
+
         args_ = parser_.parse_args(args_)
-        # print('%s%s%s' % (args_.run_motion_capture, ' '.join(args_),
-        #       args_.run_motion_capture))
+
+        input_file = args_.input
+        validate_file(input_file, 'Input file')
+
+        output_dir = args_.output
+
+        fdcm_detector = fdcm.Fdcm()
+        fdcm_detector.input_file = input_file
+        fdcm_detector.output_dir = output_dir
+        fdcm_detector.process()
 
 
 class ClassificationService(Service):
+    """Classification service object
+
+    Ex call:
+    py run_service.py classification
+        -i ..\..\data\sample_video\paris_people_bridge00_preview.mp4
+        -o output.mp4
+        -pth ..\..\..\ssd300_mAP_77.43_v2.pth
+    """
     def __init__(self, command_context: dict):
         super().__init__('classification', command_context)
 
     @staticmethod
-    def process(parser_, context_, args_):
-        parser_.add_argument('-rc', '--run_classification', required=True)
+    def process(parser_, context_, args_) -> None:
+        # TODO doc
+        add_parse_filepath(
+            parser_, '-i', '--input',
+            help_='Input file that will be processed.'
+        )
+        add_parse_filepath(
+            parser_, '-o', '--output',
+            help_='Output file with classified frames.'
+        )
+        add_parse_filepath(
+            parser_, '-pth', '--training_file',
+            help_='SSD Training file.'
+        )
+
         args_ = parser_.parse_args(args_)
-        # print('%s%s%s' % (args_.run_classification,
-        #       ' '.join(args_), args_.run_classification))
+
+        input_file = args_.input
+        validate_file(input_file, 'Input file')
+
+        training_file = args_.training_file
+        validate_file(training_file, 'Training file')
+
+        output_file = args_.output
+
+        # TODO Function this out or figure out how to segregate these
+        # interfaces so that processing can be done elseware.
+        ssd_neural_net = detect.initialize_ssd(pth_file)
+        base_transform = detect.get_base_transform(ssd_neural_net)
+
+        (frame_reader, fps) = detect.get_reader_fps_pair_from_stream(
+            input_file)
+
+        with imageio.get_writer(output_file, fps=fps) as frame_writer:
+            for i, frame in enumerate(frame_reader):
+                # Detected frame
+                new_frame = detect.detect_frame(
+                    frame, ssd_neural_net.eval(), base_transform)
+
+                # Append our new detected frame to the new video writer
+                frame_writer.append_data(new_frame)
+                print(f'Processing frame: {i}')
 
 
 ###############################################################################
 @dec_singleton
 class ServiceManager:
     def __init__(self):
-        # Set up the base argument handler
-        # Argument handler object
-        self.__handler = ArgumentHandler(enable_autocompletion=True)
-        self.__handler.add_help
-        self.__handler._use_subcommand_help
-
         # Command context that is passed to each Service
         # The command context is dictionary of all subcommands implemented by
         # each registered service.
@@ -69,6 +155,23 @@ class ServiceManager:
         # List of service types that are available after services are
         # registered.
         self.serviceTypes = list(command_context.keys())
+
+        # Set up the base argument handler
+        # Argument handler object
+        self.__handler = ArgumentHandler(enable_autocompletion=True)
+        self.__handler.add_argument(
+            '-s', '--services',
+            action='store_true',
+            help='List the current registered services.'
+        )
+
+        self.__handler.add_help
+        self.__handler._use_subcommand_help
+
+        # Parse current top level args
+        args = self.__handler.parse_args()
+        if args.services:
+            print(self.serviceTypes)
 
         self.__handler.set_subcommands(command_context)
         self.__handler.run()

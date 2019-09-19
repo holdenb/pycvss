@@ -3,6 +3,7 @@ import shutil
 import tempfile
 import subprocess
 import time
+from pathlib import Path
 
 
 # File formats
@@ -39,6 +40,26 @@ class TemporaryCopy():
 
 ###############################################################################
 # Utility functions
+
+def check_filepath(filepath_: str) -> bool:
+    """Checks a filepath to ensure that is exists and is
+    a file.
+
+    Arguments:
+        filepath_ {str} -- filepath
+
+    Returns:
+        bool -- True if the filepath exists and is a file
+    """
+    if filepath_ is None:
+        return False
+
+    path_obj = Path(filepath_)
+    if not path_obj.exists() or not path_obj.is_file():
+        return False
+
+    return True
+
 
 def get_current_path() -> str:
     """Gets the path of the current file being executed
