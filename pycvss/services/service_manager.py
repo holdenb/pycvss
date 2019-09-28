@@ -154,24 +154,19 @@ class ServiceManager:
 
         # List of service types that are available after services are
         # registered.
-        self.serviceTypes = list(command_context.keys())
+        self.service_types = list(command_context.keys())
+
+        # Service list subcommand
+        @subcmd('services')
+        def cmd_services(parser_, context_, args_):
+            print(self.service_types)
 
         # Set up the base argument handler
         # Argument handler object
         self.__handler = ArgumentHandler(enable_autocompletion=True)
-        self.__handler.add_argument(
-            '-s', '--services',
-            action='store_true',
-            help='List the current registered services.'
-        )
-
         self.__handler.add_help
         self.__handler._use_subcommand_help
-
-        # Parse current top level args
-        args = self.__handler.parse_args()
-        if args.services:
-            print(self.serviceTypes)
-
+        # The handler will utilize the context to create subcommands for each
+        # process function that is registered by the services
         self.__handler.set_subcommands(command_context)
         self.__handler.run()

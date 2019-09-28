@@ -1,4 +1,4 @@
-from serviceManager import ServiceManager
+from service_manager import ServiceManager
 
 
 ###############################################################################
