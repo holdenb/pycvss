@@ -5,6 +5,8 @@ from arghandler import *
 
 import pycvss.ffmpeg.fdcm as fdcm
 import pycvss.ssd.detect as detect
+from pycvss.ffmpeg.bindings import *
+from pycvss.ffmpeg.calls import *
 from pycvss.utils import check_filepath, dec_singleton
 
 
@@ -65,7 +67,6 @@ class MotionCaptureService(Service):
             parser_, '-o', '--output',
             help_='Output directory for captured motion.'
         )
-
         args_ = parser_.parse_args(args_)
 
         input_file = args_.input
@@ -106,7 +107,6 @@ class ClassificationService(Service):
             parser_, '-pth', '--training_file',
             help_='SSD Training file.'
         )
-
         args_ = parser_.parse_args(args_)
 
         input_file = args_.input
@@ -136,6 +136,29 @@ class ClassificationService(Service):
                 print(f'Processing frame: {i}')
 
 
+class GrayscaleConversionService(Service):
+    """Grayscale video conversion service
+    """
+    def __init__(self, command_context: dict):
+        super().__init__('grayscale', command_context)
+
+    @staticmethod
+    def process(parser_, context_, args_) -> None:
+        # TODO doc
+        add_parse_filepath(
+            parser_, '-i', '--input',
+            help_='Input file that will be processed.'
+        )
+        add_parse_filepath(
+            parser_, '-o', '--output',
+            help_='Output file of the conversion.'
+        )
+        args_ = parser_.parse_args(args_)
+
+        call_log_args(
+            lambda: grayscale_conversion_args(args_.input, args_.output))
+
+
 ###############################################################################
 @dec_singleton
 class ServiceManager:
@@ -149,7 +172,8 @@ class ServiceManager:
         # List of registered services
         self.services = [
             MotionCaptureService(command_context),
-            ClassificationService(command_context)
+            ClassificationService(command_context),
+            GrayscaleConversionService(command_context)
         ]
 
         # List of service types that are available after services are
