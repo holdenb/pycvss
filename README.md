@@ -4,8 +4,21 @@
 
 ## Quick installation guide for the PYCVSS module :coffee: :eyeglasses:
 ```Shell
-pip install -r requirements_dev.txt
-pip install -e .
+pip install -r requirements.txt --user
+pip install -e . --user
+```
+
+## Pipenv can also be used to install the module and it's dependencies
+```Shell
+pip install pipenv --user
+pipenv install -dev
+pipenv install -e .
+
+## Open up a pipenv shell (this will enable your virtual environment)
+pipenv shell
+## Run scripts within the shell
+## Exit the shell when finished
+exit
 ```
 
 ### Note: You will need to install both pytorch and ffmpeg:
@@ -23,26 +36,30 @@ pip install -e .
 
 ### Once downloaded, place the chosen training file within the ssd/training_files/ directory.
 
-# Running the example scripts
-Theres currently an example_scripts directory that contains code on how to run:
- - Motion capture (FDCM single video input)
- - Static SSD object detection (frame by frame, single input)
- - Live SSD object detection (Note: GPU Acceleration is strongly advised)
- - FFMPEG benchmarking test suite
-
-#
-## Example test:
-From the pycvss directory:
+# Running a service:
+To list all available services:
 ```Shell
-./run_ssd_detector.py -p ssd/training_files/ssd300_mAP_77.43_v2.pth
+py run_service.py services
 ```
-This will use a default sample video for detection.
+Service commands take on the following format:
+```Shell
+py run_service.py {service_name_subarg} {-arg}
+```
+Running the motioncapture service:
+```Shell
+## To show the help menu for a specific service
+py run_service.py motioncapture --help
+
+## Running the service
+py run_service.py motioncapture -i path/to/input_file.mp4 -o output_file.mp4
+```
+
 
 #
 ## TODO
 This is the current TODO list for improvements to the PYCVSS module:
 - Still to come:
   * [x] Initial implementation of Service Management object and module entry point
-  * [ ] Initial implementation of motion capture and detection services
+  * [x] Initial implementation of motion capture and detection services
   * [ ] Implementation of FFMPEG calls (such as grayscale conversion, etc.) as services on the management object
   * [ ] Additional FFPEG bindings / process arg calls
