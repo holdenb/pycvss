@@ -15,7 +15,6 @@ from pycvss.utils import check_filepath, dec_singleton
 
 def add_parse_filepath(parser_, arg_: str,
                        arg_context_: str, help_: str=None) -> None:
-    # TODO doc
     if '-' not in arg_ or '--' not in arg_context_:
         raise Exception('Invalid argument or context argument.')
     parser_.add_argument(
@@ -25,22 +24,29 @@ def add_parse_filepath(parser_, arg_: str,
 
 
 def validate_file(input_file_: str, name_: str) -> None:
-    # TODO doc
     if not check_filepath(input_file_):
         raise FileNotFoundError(f'{name_} is invalid or not found.')
 
 
 ###############################################################################
 class Service(ABC):
-    # TODO doc
     def __init__(self, type_: str, command_context_: dict):
         super().__init__()
         self.type = type_
         command_context_.update({self.type: self.process})
 
-    @staticmethod
+    def process(self, parser_, context_, args_) -> None:
+        # Process arguments and feed them to the service execution
+        self._process(parser_, context_, args_)
+        args_ = parser_.parse_args(args_)
+        self._run_service(args_)
+
     @abstractmethod
-    def process(parser_, context_, args_) -> None:
+    def _process(self, parser_, context_, args_) -> None:
+        pass
+
+    @abstractmethod
+    def _run_service(self, args_) -> None:
         pass
 
 
@@ -56,9 +62,7 @@ class MotionCaptureService(Service):
     def __init__(self, command_context: dict):
         super().__init__('motioncapture', command_context)
 
-    @staticmethod
-    def process(parser_, context_, args_) -> None:
-        # TODO doc
+    def _process(self, parser_, context_, args_) -> None:
         add_parse_filepath(
             parser_, '-i', '--input',
             help_='Input file that will be processed.'
@@ -67,8 +71,8 @@ class MotionCaptureService(Service):
             parser_, '-o', '--output',
             help_='Output directory for captured motion.'
         )
-        args_ = parser_.parse_args(args_)
 
+    def _run_service(self, args_) -> None:
         input_file = args_.input
         validate_file(input_file, 'Input file')
 
@@ -92,9 +96,7 @@ class ClassificationService(Service):
     def __init__(self, command_context: dict):
         super().__init__('classification', command_context)
 
-    @staticmethod
-    def process(parser_, context_, args_) -> None:
-        # TODO doc
+    def _process(self, parser_, context_, args_) -> None:
         add_parse_filepath(
             parser_, '-i', '--input',
             help_='Input file that will be processed.'
@@ -107,8 +109,8 @@ class ClassificationService(Service):
             parser_, '-pth', '--training_file',
             help_='SSD Training file.'
         )
-        args_ = parser_.parse_args(args_)
 
+    def _run_service(self, args_) -> None:
         input_file = args_.input
         validate_file(input_file, 'Input file')
 
@@ -117,8 +119,6 @@ class ClassificationService(Service):
 
         output_file = args_.output
 
-        # TODO Function this out or figure out how to segregate these
-        # interfaces so that processing can be done elseware.
         ssd_neural_net = detect.initialize_ssd(pth_file)
         base_transform = detect.get_base_transform(ssd_neural_net)
 
@@ -142,9 +142,7 @@ class GrayscaleConversionService(Service):
     def __init__(self, command_context: dict):
         super().__init__('grayscale', command_context)
 
-    @staticmethod
-    def process(parser_, context_, args_) -> None:
-        # TODO doc
+    def _process(self, parser_, context_, args_) -> None:
         add_parse_filepath(
             parser_, '-i', '--input',
             help_='Input file that will be processed.'
@@ -153,8 +151,8 @@ class GrayscaleConversionService(Service):
             parser_, '-o', '--output',
             help_='Output file of the conversion.'
         )
-        args_ = parser_.parse_args(args_)
 
+    def _run_service(self, args_) -> None:
         call_log_args(
             lambda: grayscale_conversion_args(args_.input, args_.output))
 
