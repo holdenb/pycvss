@@ -119,7 +119,7 @@ class ClassificationService(Service):
 
         output_file = args_.output
 
-        ssd_neural_net = detect.initialize_ssd(pth_file)
+        ssd_neural_net = detect.initialize_ssd(training_file)
         base_transform = detect.get_base_transform(ssd_neural_net)
 
         (frame_reader, fps) = detect.get_reader_fps_pair_from_stream(
