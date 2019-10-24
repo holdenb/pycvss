@@ -1,4 +1,3 @@
-
 import imageio
 from abc import ABC, abstractmethod
 from arghandler import *
@@ -15,6 +14,16 @@ from pycvss.utils import check_filepath, dec_singleton
 
 def add_parse_filepath(parser_, arg_: str,
                        arg_context_: str, help_: str=None) -> None:
+    """Add a convenient option for parsing a filepath.
+
+    Arguments:
+        parser_ {Argparser} -- Argument parser
+        arg_ {str} -- Argument name
+        arg_context_ {str} -- Argument context
+
+    Keyword Arguments:
+        help_ {str} -- Help string for this argument (default: {None})
+    """
     if '-' not in arg_ or '--' not in arg_context_:
         raise Exception('Invalid argument or context argument.')
     parser_.add_argument(
@@ -24,18 +33,46 @@ def add_parse_filepath(parser_, arg_: str,
 
 
 def validate_file(input_file_: str, name_: str) -> None:
+    """Validate that a file exists & is a file.
+
+    Arguments:
+        input_file_ {str} -- Input filepath
+        name_ {str} -- Name of the argument in which this file correlates
+        to
+    """
     if not check_filepath(input_file_):
         raise FileNotFoundError(f'{name_} is invalid or not found.')
 
 
 ###############################################################################
 class Service(ABC):
+    """Base service interface from which subclasses should implement. This
+    Object provides a process method. The process method will translate directly
+    into a sub-argument on the manager. Subclasses should implement _process
+    and _run_service to define a way arguments are processed / displayed and
+    an entry point into service execution.
+    """
     def __init__(self, type_: str, command_context_: dict):
+        """
+        Arguments:
+            type_ {str} -- Service type (name)
+            command_context_ {dict} -- Command context from the manager
+        """
         super().__init__()
         self.type = type_
         command_context_.update({self.type: self.process})
 
     def process(self, parser_, context_, args_) -> None:
+        """This method will be directly translated into a sub-argument on
+        the manager. It will use the name of the service as the argument name.
+        This method will process arguments from the child class,
+        and then pass those arguments to an overridden _run_service method.
+
+        Arguments:
+            parser_ {ArgumentParser} -- Argument parser
+            context_ {parser context object} -- Parser context
+            args_ {dict context} -- Parser arguments
+        """
         # Process arguments and feed them to the service execution
         self._process(parser_, context_, args_)
         args_ = parser_.parse_args(args_)
@@ -43,11 +80,28 @@ class Service(ABC):
 
     @abstractmethod
     def _process(self, parser_, context_, args_) -> None:
-        pass
+        """Defines a way to create and process arbitrary
+        arguments. Arguments need to be added to the
+        parser within this method. The base service will
+        handle the parsing and passing of the arguments to the
+        _run_service method.
+
+        Arguments:
+            parser_ {ArgumentParser} -- Argument parser
+            context_ {parser context object} -- Parser context
+            args_ {dict context} -- Parser arguments
+        """
 
     @abstractmethod
     def _run_service(self, args_) -> None:
-        pass
+        """Defines a way to run a service. Service core
+        code should be implemented through this method.
+        args_ should be fully populated with values parsed
+        from the defined arguments within the _process method.
+
+        Arguments:
+            args_ {dict context} -- Populated parser arguments
+        """
 
 
 ###############################################################################
@@ -138,6 +192,12 @@ class ClassificationService(Service):
 
 class GrayscaleConversionService(Service):
     """Grayscale video conversion service
+
+    Ex Call:
+
+    py run_service.py grayscale
+        -i ..\..\data\sample_video\paris_people_bridge00_preview.mp4
+        -o output.mp4
     """
     def __init__(self, command_context: dict):
         super().__init__('grayscale', command_context)
@@ -160,6 +220,16 @@ class GrayscaleConversionService(Service):
 ###############################################################################
 @dec_singleton
 class ServiceManager:
+    """Service management object.
+    The service manager handles services and their sub-argument implementations.
+    Each service is given a context object which will be populated with the service's
+    respective "process" command. This command (sub-argument) is called with the
+    name of the service. The service manager will also handle any top level arguments.
+    All services registered remain alive for the lifespan of the manager.
+
+    TODO: An idea would be to have services registerable on the manager rather
+    than having them defined within here.
+    """
     def __init__(self):
         # Command context that is passed to each Service
         # The command context is dictionary of all subcommands implemented by
