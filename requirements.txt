@@ -1,6 +1,6 @@
 setuptools==41.2.0
 arghandler==1.2.0
-wheel==0.33.1
+wheel==0.38.1
 imageio==2.5.0
 imageio-ffmpeg==0.3.0
 imutils==0.5.3
