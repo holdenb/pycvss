@@ -1,4 +1,4 @@
-# PYCVSS
+# pycvss
 
 ### This is a python module for the CVSS architecture designed for research and service provision :computer:
 
