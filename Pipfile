@@ -11,7 +11,7 @@ arghandler = "==1.2.0"
 imageio = "==2.5.0"
 imageio-ffmpeg = "==0.3.0"
 imutils = "==0.5.3"
-opencv-python = "==4.1.0.25"
+opencv-python = "==4.2.0.32"
 pytest = "==4.3.0"
 pytest-benchmark = "==3.2.2"
 
